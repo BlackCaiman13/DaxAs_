@@ -1,0 +1,7 @@
+{
+  "name": "FixHo-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
