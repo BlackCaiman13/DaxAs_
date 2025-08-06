@@ -1,20 +1,100 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;" >Dashboard</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" >
+  <div style="padding: 1rem 1rem 0 1rem;">
+    <h2 style="font-weight: bold; font-size: 1.4rem; margin-bottom: 1.5rem;">Salut, Alex!</h2>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+      <div style="background: #861313; border-radius: 1rem; padding: 1rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+          <ion-icon name="construct-outline" style="font-size: 1.2rem; color: #ffffff;"></ion-icon>
+          <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 1rem; color: #ffffff;">1</div>
+          <div style="font-size: 0.7rem; color: #ffffff;">En attente</div>
+        </div>
+      </div>
+
+      <div style="background: #b47420; border-radius: 1rem; padding: 1rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+          <ion-icon name="construct-outline" style="font-size: 1.2rem; color: #ffffff;"></ion-icon>
+          <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 1rem; color: #ffffff;">1</div>
+          <div style="font-size: 0.7rem; color: #ffffff;">En cours</div>
+        </div>
+      </div>
+
+      <div style="background: #194d09; border-radius: 1rem; padding: 1rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+          <ion-icon name="checkmark-circle-outline" style="font-size: 1.2rem; color: #ffffff;"></ion-icon>
+          <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 1rem; color: #ffffff;">1</div>
+          <div style="font-size: 0.7rem; color: #ffffff;">Terminé</div>
+        </div>
+      </div>
+
+    </div>
+    <ion-button expand="block" color="primary" style="margin-bottom: 1.5rem; font-weight: bold; font-size: 1rem;">
+      + Nouvelle requête de reparation
+    </ion-button>
+    <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Categories</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+      <div style="background: #fff; border-radius: 1rem; padding: 1.5rem 0; text-align: center; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <ion-icon name="phone-portrait-outline" style="font-size: 2.2rem; color: #4d5ef2;"></ion-icon>
+        <div style="margin-top: 0.5rem; color: #232323; font-weight: 500;">Smartphone</div>
+      </div>
+      <div style="background: #fff; border-radius: 1rem; padding: 1.5rem 0; text-align: center; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <ion-icon name="laptop-outline" style="font-size: 2.2rem; color: #4d5ef2;"></ion-icon>
+        <div style="margin-top: 0.5rem; color: #232323; font-weight: 500;">Laptop</div>
+      </div>
+      <div style="background: #fff; border-radius: 1rem; padding: 1.5rem 0; text-align: center; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <ion-icon name="tablet-portrait-outline" style="font-size: 2.2rem; color: #4d5ef2;"></ion-icon>
+        <div style="margin-top: 0.5rem; color: #232323; font-weight: 500;">Tablet</div>
+      </div>
+      <div style="background: #fff; border-radius: 1rem; padding: 1.5rem 0; text-align: center; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <ion-icon name="watch-outline" style="font-size: 2.2rem; color: #4d5ef2;"></ion-icon>
+        <div style="margin-top: 0.5rem; color: #232323; font-weight: 500;">Smartwatch</div>
+      </div>
+    </div>
+
+    <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Comment ça marche ?</h3>
+    <div style="margin-bottom: 1.5rem;">
+      <div style="background: #fff; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <div style="display: flex; align-items: center;">
+          <ion-badge slot="start" >1</ion-badge>
+          <div style="margin-left: 0.75rem;">
+            <div style="font-weight: bold;">Soumettre votre demande</div>
+            <div style="color: #6b6b6b; font-size: 0.95rem;">Décrivez facilement le problème de votre appareil, téléchargez des photos et fournissez les détails nécessaires à la réparation.</div>
+          </div>
+        </div>
+      </div>
+      <div style="background: #fff; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <div style="display: flex; align-items: center;">
+          <ion-badge slot="start" >2</ion-badge>
+          <div style="margin-left: 0.75rem;">
+            <div style="font-weight: bold;">Obtenir l'avis d'un expert</div>
+            <div style="color: #6b6b6b; font-size: 0.95rem;">Nous vous mettons en relation avec des techniciens de réparation certifiés en fonction de votre appareil et du type de problème.</div>
+          </div>
+        </div>
+      </div>
+      <div style="background: #fff; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <div style="display: flex; align-items: center;">
+          <ion-badge slot="start" >3</ion-badge>
+          <div style="margin-left: 0.75rem;">
+            <div style="font-weight: bold;">Suivi de votre réparation</div>
+            <div style="color: #6b6b6b; font-size: 0.95rem;">Suivre en temps réel la progression, du diagnostic à la réparation et à la livraison, grâce à des mises à jour détaillées.</div>
+          </div>
+        </div>
+      </div>
+      <div style="background: #fff; border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
+        <div style="display: flex; align-items: center;">
+          <ion-badge slot="start" >4</ion-badge>
+          <div style="margin-left: 0.75rem;">
+            <div style="font-weight: bold;">Recevoir votre appareil</div>
+            <div style="color: #6b6b6b; font-size: 0.95rem;">Vous récupérez votre appareil réparé rapidement et en toute sécurité, avec une garantie de satisfaction.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
 </ion-content>
