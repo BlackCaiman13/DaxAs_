@@ -15,7 +15,7 @@ export class RequestPage implements OnInit {
     {
       title: 'iPhone 13 Screen Repair',
       id: 'RF789012',
-      status: 'In Progress',
+      status: 'En cours',
       statusColor: '#c48a1b',
       statusTextColor: '#fff'
     },
@@ -29,14 +29,14 @@ export class RequestPage implements OnInit {
     {
       title: 'Smartwatch Glass Repair',
       id: 'RF789014',
-      status: 'Pending',
+      status: 'En attente',
       statusColor: '#4d5ef2',
       statusTextColor: '#fff'
     },
     {
       title: 'Desktop PC Virus Removal',
       id: 'RF789015',
-      status: 'Canceled',
+      status: 'annulé',
       statusColor: '#ff3b30',
       statusTextColor: '#fff'
     }

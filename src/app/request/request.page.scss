@@ -1,0 +1,90 @@
+.centered-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+.request-content {
+  background: #f6f7fb;
+}
+.request-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.2rem 0.7rem 0 0.7rem;
+  min-height: 100%;
+}
+.request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.request-item {
+  background: #fff;
+  border-radius: 0.7rem;
+  padding: 1rem;
+  box-shadow: 0 1px 4px #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+.request-info {
+  display: flex;
+  flex-direction: column;
+}
+.request-title {
+  font-weight: bold;
+  color: #232323;
+  font-size: 1.05rem;
+}
+.request-id {
+  color: #6b6b6b;
+  font-size: 0.97rem;
+  margin-top: 0.2rem;
+}
+.request-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  min-width: 100px;
+  max-width: 32%;
+}
+.request-status {
+  border-radius: 1rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  align-self: flex-start;
+}
+.request-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+.voir-plus {
+  color: #4d5ef2;
+  font-weight: 500;
+  font-size: 1rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.chevron-icon {
+  font-size: 1.2rem;
+  color: #bdbdbd;
+}
+.support-buttons {
+  display: flex;
+  gap: 1rem;
+}
+.support-btn {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
