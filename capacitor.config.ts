@@ -6,10 +6,10 @@ const config: CapacitorConfig = {
   webDir: 'www',
   plugins: {
     LiveUpdates: {
-      appId: '042a1261',
+      appId: '7a761a3d',
       channel: 'Production',
       autoUpdateMethod: 'background',
-      maxVersions: 2
+      maxVersions: 3
     }
   }
 };
