@@ -11,7 +11,6 @@ import {
   IonBadge,
   IonIcon,
 } from '@ionic/angular/standalone';
-import { RouterLinkActive } from "@angular/router";
 
 @Component({
   selector: 'app-view-details',
@@ -29,7 +28,6 @@ import { RouterLinkActive } from "@angular/router";
     IonBackButton,
     IonBadge,
     IonIcon,
-    RouterLinkActive
 ]
 })
 export class ViewDetailsPage {

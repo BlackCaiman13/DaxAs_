@@ -9,7 +9,7 @@ import { RouterLinkActive } from "@angular/router";
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonTitle, IonHeader, IonContent, IonButton, IonIcon, IonToolbar, CommonModule, FormsModule, IonBadge, RouterLinkActive],
+  imports: [IonTitle, IonHeader, IonContent, IonButton, IonIcon, IonToolbar, CommonModule, FormsModule, IonBadge],
 })
 export class HomePage {
   constructor() {}

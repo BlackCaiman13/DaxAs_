@@ -28,6 +28,12 @@ export const routes: Routes = [
       {
         path: 'new-request',
         loadComponent: () => import('./new-request/new-request.page').then((m) => m.NewRequestPage),
+      },
+      {
+        path: 'request-confirmed',
+        loadComponent: () => import('./request-confirmed/request-confirmed.page').then((m) => m.RequestConfirmedPage),
+      },
+      {
       }
     ],
   },
@@ -39,11 +45,8 @@ export const routes: Routes = [
   {
     path: 'onboarding',
     loadComponent: () => import('./onboarding/onboarding.page').then( m => m.OnboardingPage)
-  },
-  {
-    path: 'new-request',
-    loadComponent: () => import('./new-request/new-request.page').then( m => m.NewRequestPage)
-  },
+  }
+  
 
 
 ];

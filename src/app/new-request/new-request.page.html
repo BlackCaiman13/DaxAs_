@@ -39,55 +39,35 @@
 
           <div >
             <h3 style="font-weight: 500; margin-bottom: 0.5rem;">Add Photos</h3>
-            <div style="border: 2px dashed #e9eaf0; border-radius: 0.5rem; padding: 1rem; text-align: center; cursor: pointer;" (click)="addPhoto()">
-              <ion-icon name="camera-outline" style="font-size: 2rem; color: #6b6b6b;"></ion-icon>
-              <div style="color: #6b6b6b; margin-top: 0.5rem;">Add Photo</div>
-            </div>
+            
+            <!-- Grille des photos sélectionnées -->
+            @if (selectedPhotos.length > 0) {
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                @for (photo of selectedPhotos; track $index) {
+                  <div style="position: relative; aspect-ratio: 1;">
+                    <img [src]="photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.5rem;">
+                    <button (click)="removePhoto($index)" style="position: absolute; top: -0.5rem; right: -0.5rem; background: #ff4444; color: white; border: none; border-radius: 50%; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                      <ion-icon name="close-outline" style="font-size: 1rem;"></ion-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Bouton d'ajout de photo -->
+            @if (selectedPhotos.length < 6) {
+              <div style="border: 2px dashed #e9eaf0; border-radius: 0.5rem; padding: 1rem; text-align: center; cursor: pointer;" (click)="addPhoto()">
+                <ion-icon name="camera-outline" style="font-size: 2rem; color: #6b6b6b;"></ion-icon>
+                <div style="color: #6b6b6b; margin-top: 0.5rem;">Add Photo</div>
+              </div>
+            }
           </div>
         </div>
       }
 
       <!-- Étape 2: Détails de localisation -->
       @if (currentStep === 2) {
-        <div>
-          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Location details</h2>
-          <p style="color: #6b6b6b; margin-bottom: 1rem;">Specify your location details or share your position and choose date of collect.</p>
 
-          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked">My Location</ion-label>
-            <ion-input formControlName="location" placeholder="location"></ion-input>
-          </ion-item>
-
-          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked">Location details</ion-label>
-            <ion-input formControlName="locationDetails" placeholder="location details"></ion-input>
-          </ion-item>
-
-          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Set Date</ion-label>
-            <ion-datetime-button datetime="collectionDate" style="margin-top: 0.5rem;"></ion-datetime-button>
-          </ion-item>
-
-          <ion-modal [keepContentsMounted]="true">
-            <ng-template>
-              <ion-datetime 
-                id="collectionDate"
-                formControlName="collectionDate"
-                presentation="date"
-                [showDefaultButtons]="true"
-                doneText="Confirmer"
-                cancelText="Annuler"
-                [min]="'2025-09-14'"
-                firstDayOfWeek="1"
-                locale="fr-FR">
-              </ion-datetime>
-            </ng-template>
-          </ion-modal>
-        </div>
-      }
-
-      <!-- Étape 3: Description du problème -->
-      @if (currentStep === 3) {
         <div>
           <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Problem Description</h2>
           <p style="color: #6b6b6b; margin-bottom: 1rem;">Describe the issue in detail. Be as specific as possible.</p>
@@ -104,6 +84,33 @@
           <div style="text-align: right; color: #6b6b6b; font-size: 0.8rem;">
             {{requestForm.get('problemDescription')?.value?.length || 0}}/500 characters
           </div>
+        </div>
+
+        
+      }
+
+      <!-- Étape 3: Description du problème -->
+      @if (currentStep === 3) {
+        <div>
+          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Location details</h2>
+          <p style="color: #6b6b6b; margin-bottom: 1rem;">Specify your location details or share your position and choose date of collect.</p>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked">My Location</ion-label>
+            <ion-input formControlName="location" placeholder="location"></ion-input>
+          </ion-item>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked">Location details</ion-label>
+            <ion-input formControlName="locationDetails" placeholder="location details"></ion-input>
+          </ion-item>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Set Date</ion-label>
+             <ion-datetime presentation="date-time" [preferWheel]="true"></ion-datetime>
+          </ion-item>
+
+         
         </div>
       }
     </form>
