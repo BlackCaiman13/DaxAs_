@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType } from '@capacitor/camera';
+import { Geolocation } from '@capacitor/geolocation';
 import {
   IonContent,
   IonHeader,
@@ -16,7 +17,8 @@ import {
   IonTextarea,
   IonDatetime,
   IonButtons,
-  IonBackButton } from '@ionic/angular/standalone';
+  IonBackButton, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-new-request',
@@ -39,7 +41,7 @@ import {
     IonTextarea,
     IonDatetime,
     IonButtons,
-    IonBackButton
+    IonBackButton, IonSelect, IonSelectOption
   ]
 })
 
@@ -70,10 +72,11 @@ export class NewRequestPage {
       if (this.requestForm.valid) {
         // Met à jour les photos dans le formulaire avant de naviguer
         this.requestForm.patchValue({ photos: this.selectedPhotos });
-        this.router.navigate(['/request-confirmed'], {
+        
+      }
+      this.router.navigate(['/tabs/request-confirmed'], {
           state: { formData: this.requestForm.value }
         });
-      }
     }
   }
 
@@ -87,7 +90,6 @@ export class NewRequestPage {
     try {
       const image = await Camera.getPhoto({
         quality: 90,
-        allowEditing: true,
         resultType: CameraResultType.Uri,
         promptLabelHeader: 'Sélectionner une source',
         promptLabelPhoto: 'Choisir depuis la galerie',
@@ -112,7 +114,53 @@ export class NewRequestPage {
     this.requestForm.patchValue({ photos: this.selectedPhotos });
   }
 
-  
+  async getCurrentLocation() {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        // Cas mobile (Android / iOS)
+        const coordinates = await Geolocation.getCurrentPosition();
+        const { latitude, longitude } = coordinates.coords;
+        this.toLisibleLocation(`${latitude}, ${longitude}`);
+
+      }
+
+      else {
+        // Cas Web (navigateur)
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            
+            this.toLisibleLocation(`${latitude}, ${longitude}`);
+          });
+
+     
+
+        } else {
+          console.error('La géolocalisation n’est pas supportée');
+        }
+      }
+    } catch (err) {
+      console.error('Erreur lors de la récupération de la localisation', err);
+    }
+  }
+
+  async toLisibleLocation(coord: string) {
+    const [lat, lon] = coord.split(',').map(Number);
+    const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+      );
+      const data = await response.json();
+
+      // Construire une adresse lisible
+      const city = data.address.city || data.address.town || data.address.village || '';
+      const district = data.address.suburb || data.address.neighbourhood || '';
+      const displayAddress = `${city}${district ? ', ' + district : ''}`;
+
+      // Remplir le formulaire
+      this.requestForm.patchValue({
+        location: displayAddress || `${lat}, ${lon}`,
+      });
+  }
 
   get stepProgress() {
     return (this.currentStep / 3) * 100;

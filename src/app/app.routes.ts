@@ -32,8 +32,6 @@ export const routes: Routes = [
       {
         path: 'request-confirmed',
         loadComponent: () => import('./request-confirmed/request-confirmed.page').then((m) => m.RequestConfirmedPage),
-      },
-      {
       }
     ],
   },

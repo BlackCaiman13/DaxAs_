@@ -14,37 +14,37 @@
     </div>
 
     <!-- Message de confirmation -->
-    <h2 style="font-weight: bold; font-size: 1.5rem; margin-bottom: 0.5rem;">Your repair request has been submitted!</h2>
-    <p style="color: #6b6b6b; margin-bottom: 2rem;">We've received your request and will provide an update soon.</p>
+    <h2 style="font-weight: bold; font-size: 1.5rem; margin-bottom: 0.5rem;">Votre demande de réparation a été soumise !</h2>
+    <p style="color: #6b6b6b; margin-bottom: 2rem;">Nous avons bien reçu votre demande et vous tiendrons informé dès que possible.</p>
 
     <!-- Résumé de la demande -->
     <div style="background: #fafbfc; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
-      <h3 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1.5rem; text-align: left;">Request Summary</h3>
-      
+      <h3 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1.5rem; text-align: left;">Résumé de la demande</h3>
+
       <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-        <span style="color: #6b6b6b;">Request ID</span>
+        <span style="color: #6b6b6b;">ID de demande</span>
         <span style="font-weight: 500;">{{requestId}}</span>
       </div>
 
       <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-        <span style="color: #6b6b6b;">Estimated Delivery</span>
+        <span style="color: #6b6b6b;">Date de livraison estimée</span>
         <span style="font-weight: 500;">{{estimatedDelivery}}</span>
       </div>
 
       <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-        <span style="color: #6b6b6b;">Diagnostic Fee</span>
+        <span style="color: #6b6b6b;">Frais de diagnostic</span>
         <span style="font-weight: 500;">${{diagnosticFee.toFixed(2)}}</span>
       </div>
 
       <div style="display: flex; justify-content: space-between;">
-        <span style="color: #6b6b6b;">Estimated Parts Fee</span>
+        <span style="color: #6b6b6b;">Frais de pièces estimés</span>
         <span style="font-weight: 500;">${{estimatedPartsFee.min.toFixed(2)}} - ${{estimatedPartsFee.max.toFixed(2)}}</span>
       </div>
     </div>
 
     <!-- Bouton de suivi -->
     <ion-button expand="block" (click)="trackRequest()" style="--border-radius: 0.5rem;">
-      Track Request
+      Suivre la demande
       <ion-icon name="arrow-forward" slot="end"></ion-icon>
     </ion-button>
   </div>

@@ -13,7 +13,7 @@
   <div >
     <ion-list lines="none">
       @for (notif of notifications; track $index) {
-        <ion-item-sliding>
+        <ion-item-sliding #slidingItem>
           <ion-item style="background: #fafbfc; align-items: flex-start; --padding-start: 1rem; --inner-padding-end: 1rem;">
             <ion-icon [name]="notif.icon" slot="start" [style.color]="notif.color" style="font-size: 1.3rem; margin-top: 0.2rem;"></ion-icon>
             <ion-label>
@@ -31,11 +31,11 @@
           
           <ion-item-options side="end">
             @if (notif.unread) {
-              <ion-item-option (click)="markAsRead(notif)" color="primary" style="--padding-start: 1rem; --padding-end: 1rem;">
+              <ion-item-option (click)="markAsRead(slidingItem,notif)" color="primary" style="--padding-start: 1rem; --padding-end: 1rem;">
                 <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
               </ion-item-option>
             }
-            <ion-item-option (click)="deleteNotification(notif)" color="danger" style="--padding-start: 1rem; --padding-end: 1rem;">
+            <ion-item-option (click)="deleteNotification(slidingItem, notif)" color="danger" style="--padding-start: 1rem; --padding-end: 1rem;">
               <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
             </ion-item-option>
           </ion-item-options>

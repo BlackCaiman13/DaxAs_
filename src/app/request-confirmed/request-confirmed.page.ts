@@ -33,6 +33,6 @@ export class RequestConfirmedPage {
   constructor(private router: Router) {}
 
   trackRequest() {
-    this.router.navigate(['/tabs/requests']);
+    this.router.navigate(['/tabs/view-details']);
   }
 }

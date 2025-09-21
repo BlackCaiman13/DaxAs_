@@ -15,57 +15,57 @@ export class NotificationsPage implements OnInit {
     {
       icon: 'create-outline',
       color: '#4d5ef2',
-      title: 'Repair Status Update',
-      message: 'Your iPhone 13 repair (REQ#10045) is now in progress. Estimated completion: 2 days.',
+      title: 'Statut de la réparation mis à jour',
+      message: 'Votre réparation d\'iPhone 13 (REQ#10045) est maintenant en cours. Date d\'achèvement estimée : 2 jours.',
       time: '5m ago',
       unread: true
     },
     {
       icon: 'alert-circle-outline',
       color: '#ff3b30',
-      title: 'Important Account Notice',
-      message: 'Please verify your contact information to ensure smooth communication regarding your repairs.',
-      time: '30m ago',
+      title: 'Avis important concernant le compte',
+      message: 'Veuillez vérifier vos informations de contact pour garantir une communication fluide concernant vos réparations.',
+      time: '30m',
       unread: true
     },
     {
       icon: 'chatbubble-ellipses-outline',
       color: '#ffb300',
-      title: 'New Message from Technician',
-      message: 'Technician has sent a message regarding your MacBook Pro repair. Check details now.',
-      time: '2h ago',
+      title: 'Nouveau message du technicien',
+      message: 'Le technicien a envoyé un message concernant la réparation de votre MacBook Pro. Vérifiez les détails maintenant.',
+      time: '2h',
       unread: true
     },
     {
       icon: 'checkmark-circle-outline',
       color: '#232323',
-      title: 'Repair Completed!',
-      message: 'Your Samsung S21 repair (REQ#10038) is now complete and ready for pickup.',
-      time: '1d ago',
+      title: 'Réparation terminée !',
+      message: 'Votre réparation de Samsung S21 (REQ#10038) est maintenant terminée et prête à être récupérée.',
+      time: '1d',
       unread: false
     },
     {
       icon: 'document-outline',
       color: '#232323',
-      title: 'Request Received',
-      message: 'Your new repair request for a desktop PC has been successfully submitted. REQ#10046.',
-      time: '2d ago',
+      title: 'Demande reçue',
+      message: 'Votre nouvelle demande de réparation pour un PC de bureau a été soumise avec succès. REQ#10046.',
+      time: '2d',
       unread: false
     },
     {
       icon: 'create-outline',
       color: '#4d5ef2',
-      title: 'Part Ordered for Repair',
-      message: 'A replacement screen has been ordered for your iPad Air 4 repair. Tracking details available soon.',
-      time: '3d ago',
+      title: 'Pièce commandée pour réparation',
+      message: 'Un écran de remplacement a été commandé pour la réparation de votre iPad Air 4. Les détails de suivi seront disponibles bientôt.',
+      time: '3d',
       unread: false
     },
     {
       icon: 'alert-circle-outline',
       color: '#ff3b30',
-      title: 'Service Interruption',
-      message: 'Some services may be temporarily unavailable due to scheduled maintenance. We apologize for any inconvenience.',
-      time: '5d ago',
+      title: 'Interruption de service',
+      message: 'Certains services peuvent être temporairement indisponibles en raison de travaux de maintenance planifiés. Nous nous excusons pour tout inconvénient.',
+      time: '5d',
       unread: false
     }
   ];
@@ -74,17 +74,21 @@ export class NotificationsPage implements OnInit {
 
   ngOnInit() {
     
+
   }
 
-  markAsRead(notification: any) {
+  markAsRead(slidingItem: IonItemSliding, notification: any) {
     notification.unread = false;
+    // Recharger la liste pour mettre à jour l'affichage
+    slidingItem.close();
+   
   }
 
-  deleteNotification(notification: any) {
+  deleteNotification(slidingItem: IonItemSliding, notification: any) {
     const index = this.notifications.indexOf(notification);
     if (index > -1) {
       this.notifications.splice(index, 1);
-      
+      slidingItem.close();
     }
   }
 

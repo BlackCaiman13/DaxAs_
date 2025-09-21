@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
-    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;">New Request</ion-title>
+    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;">Nouvelle Demande</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -25,21 +25,25 @@
       <!-- Étape 1: Détails de l'appareil -->
       @if (currentStep === 1) {
         <div>
-          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Device Details</h2>
+          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Détails de l'appareil</h2>
           
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked">Device Type</ion-label>
-            <ion-input formControlName="deviceType" placeholder="e.g., iPhone 13 Pro"></ion-input>
+            <ion-label position="stacked">Type d'appareil</ion-label>
+            <ion-select aria-label="Fruit" interface="popover" placeholder="Selectionnez un type d'appareil">
+            <ion-select-option value="apples">Smartphone</ion-select-option>
+            <ion-select-option value="oranges">Ordinateur</ion-select-option>
+            <ion-select-option value="bananas">Tablette</ion-select-option>
+            </ion-select>
           </ion-item>
 
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked">Model (Optional)</ion-label>
-            <ion-input formControlName="model" placeholder="e.g., Pro Max, M1, QLED"></ion-input>
+            <ion-label position="stacked">Modèle</ion-label>
+            <ion-input formControlName="model"  ></ion-input>
           </ion-item>
 
           <div >
-            <h3 style="font-weight: 500; margin-bottom: 0.5rem;">Add Photos</h3>
-            
+            <h3 style="font-weight: 500; margin-bottom: 0.5rem;">Ajouter des photos</h3>
+
             <!-- Grille des photos sélectionnées -->
             @if (selectedPhotos.length > 0) {
               <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
@@ -58,7 +62,7 @@
             @if (selectedPhotos.length < 6) {
               <div style="border: 2px dashed #e9eaf0; border-radius: 0.5rem; padding: 1rem; text-align: center; cursor: pointer;" (click)="addPhoto()">
                 <ion-icon name="camera-outline" style="font-size: 2rem; color: #6b6b6b;"></ion-icon>
-                <div style="color: #6b6b6b; margin-top: 0.5rem;">Add Photo</div>
+                <div style="color: #6b6b6b; margin-top: 0.5rem;">Ajouter une photo</div>
               </div>
             }
           </div>
@@ -69,14 +73,13 @@
       @if (currentStep === 2) {
 
         <div>
-          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Problem Description</h2>
-          <p style="color: #6b6b6b; margin-bottom: 1rem;">Describe the issue in detail. Be as specific as possible.</p>
+          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Description du problème</h2>
+          <p style="color: #6b6b6b; margin-bottom: 1rem;">Décrivez le problème en détail. Soyez aussi précis que possible.</p>
 
           <ion-item style="--padding-start: 0; margin-bottom: 0.5rem;">
-            <ion-label position="stacked">What's wrong with the device?</ion-label>
+            <ion-label position="stacked">Quel est le problème avec l'appareil ?</ion-label>
             <ion-textarea 
-              formControlName="problemDescription" 
-              placeholder="e.g., Screen is cracked, battery drains fast, won't turn on..."
+              formControlName="problemDescription"
               [maxlength]="500"
               rows="4">
             </ion-textarea>
@@ -92,21 +95,28 @@
       <!-- Étape 3: Description du problème -->
       @if (currentStep === 3) {
         <div>
-          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Location details</h2>
-          <p style="color: #6b6b6b; margin-bottom: 1rem;">Specify your location details or share your position and choose date of collect.</p>
+          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Détails de localisation</h2>
+          <p style="color: #6b6b6b; margin-bottom: 1rem;">Spécifiez les détails de votre emplacement ou partagez votre position et choisissez la date de collecte.</p>
 
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked">My Location</ion-label>
-            <ion-input formControlName="location" placeholder="location"></ion-input>
+            <ion-label position="stacked">Mon emplacement</ion-label>
+            <ion-input formControlName="location"></ion-input>
           </ion-item>
 
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked">Location details</ion-label>
-            <ion-input formControlName="locationDetails" placeholder="location details"></ion-input>
+            <ion-label position="stacked">Détails de l'emplacement</ion-label>
+            <ion-input formControlName="locationDetails"></ion-input>
           </ion-item>
 
+          
+            <!-- <ion-button fill="outline" (click)="getCurrentLocation()" style="flex: 1; --border-radius: 0.5rem; --padding-start: 0.5rem; --padding-end: 0.5rem;">
+              <ion-icon name="location-outline" slot="start"></ion-icon>
+              Utiliser ma position actuelle
+            </ion-button> -->
+         
+
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Set Date</ion-label>
+            <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Choisir une date</ion-label>
              <ion-datetime presentation="date-time" [preferWheel]="true"></ion-datetime>
           </ion-item>
 
@@ -118,12 +128,12 @@
 
   <div style="padding: 1rem; display: flex; gap: 1rem;">
       @if (currentStep > 1) {
-        <ion-button fill="outline" expand="block" (click)="previousStep()" style="flex: 1;">
-          Back
+        <ion-button fill="outline" expand="block" (click)="previousStep()" style="flex: 1;" color="primary">
+          Retour
         </ion-button>
       }
-      <ion-button expand="block" (click)="nextStep()" style="flex: 1;">
-        {{currentStep < 3 ? 'Next' : 'Submit'}}
+      <ion-button expand="block" (click)="nextStep()" style="flex: 1;" color="primary">
+        {{currentStep < 3 ? 'Suivant' : 'Soumettre'}}
       </ion-button>
     </div>
 </ion-content>
