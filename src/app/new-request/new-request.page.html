@@ -1,0 +1,126 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;">New Request</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="background: #fff;">
+  <div style="padding: 1.2rem 1rem;">
+    <!-- Indicateur de progression -->
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 2rem;">
+      @for (i of [1, 2, 3]; track i) {
+        <div [ngStyle]="{
+          'width': '0.5rem',
+          'height': '0.5rem',
+          'border-radius': '50%',
+          'background-color': i <= currentStep ? '#4d5ef2' : '#e9eaf0'
+        }"></div>
+      }
+    </div>
+
+    <form [formGroup]="requestForm">
+      <!-- Étape 1: Détails de l'appareil -->
+      @if (currentStep === 1) {
+        <div>
+          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Device Details</h2>
+          
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked">Device Type</ion-label>
+            <ion-input formControlName="deviceType" placeholder="e.g., iPhone 13 Pro"></ion-input>
+          </ion-item>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked">Model (Optional)</ion-label>
+            <ion-input formControlName="model" placeholder="e.g., Pro Max, M1, QLED"></ion-input>
+          </ion-item>
+
+          <div >
+            <h3 style="font-weight: 500; margin-bottom: 0.5rem;">Add Photos</h3>
+            <div style="border: 2px dashed #e9eaf0; border-radius: 0.5rem; padding: 1rem; text-align: center; cursor: pointer;" (click)="addPhoto()">
+              <ion-icon name="camera-outline" style="font-size: 2rem; color: #6b6b6b;"></ion-icon>
+              <div style="color: #6b6b6b; margin-top: 0.5rem;">Add Photo</div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Étape 2: Détails de localisation -->
+      @if (currentStep === 2) {
+        <div>
+          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Location details</h2>
+          <p style="color: #6b6b6b; margin-bottom: 1rem;">Specify your location details or share your position and choose date of collect.</p>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked">My Location</ion-label>
+            <ion-input formControlName="location" placeholder="location"></ion-input>
+          </ion-item>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked">Location details</ion-label>
+            <ion-input formControlName="locationDetails" placeholder="location details"></ion-input>
+          </ion-item>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
+            <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Set Date</ion-label>
+            <ion-datetime-button datetime="collectionDate" style="margin-top: 0.5rem;"></ion-datetime-button>
+          </ion-item>
+
+          <ion-modal [keepContentsMounted]="true">
+            <ng-template>
+              <ion-datetime 
+                id="collectionDate"
+                formControlName="collectionDate"
+                presentation="date"
+                [showDefaultButtons]="true"
+                doneText="Confirmer"
+                cancelText="Annuler"
+                [min]="'2025-09-14'"
+                firstDayOfWeek="1"
+                locale="fr-FR">
+              </ion-datetime>
+            </ng-template>
+          </ion-modal>
+        </div>
+      }
+
+      <!-- Étape 3: Description du problème -->
+      @if (currentStep === 3) {
+        <div>
+          <h2 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">Problem Description</h2>
+          <p style="color: #6b6b6b; margin-bottom: 1rem;">Describe the issue in detail. Be as specific as possible.</p>
+
+          <ion-item style="--padding-start: 0; margin-bottom: 0.5rem;">
+            <ion-label position="stacked">What's wrong with the device?</ion-label>
+            <ion-textarea 
+              formControlName="problemDescription" 
+              placeholder="e.g., Screen is cracked, battery drains fast, won't turn on..."
+              [maxlength]="500"
+              rows="4">
+            </ion-textarea>
+          </ion-item>
+          <div style="text-align: right; color: #6b6b6b; font-size: 0.8rem;">
+            {{requestForm.get('problemDescription')?.value?.length || 0}}/500 characters
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+
+  <div style="padding: 1rem; display: flex; gap: 1rem;">
+      @if (currentStep > 1) {
+        <ion-button fill="outline" expand="block" (click)="previousStep()" style="flex: 1;">
+          Back
+        </ion-button>
+      }
+      <ion-button expand="block" (click)="nextStep()" style="flex: 1;">
+        {{currentStep < 3 ? 'Next' : 'Submit'}}
+      </ion-button>
+    </div>
+</ion-content>
+
+
+    
+ 

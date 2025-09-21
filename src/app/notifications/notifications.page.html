@@ -1,7 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
     <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;">Notifications</ion-title>
     <ion-buttons slot="end">
@@ -11,19 +10,38 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" style="background: #fff;">
-  <div style="padding: 1.2rem 0.7rem 0 0.7rem;">
+  <div >
     <ion-list lines="none">
       @for (notif of notifications; track $index) {
-        <ion-item style="background: #fafbfc; border-radius: 0.7rem; margin-bottom: 1.1rem; box-shadow: 0 1px 4px #f0f0f0; align-items: flex-start;">
-          <ion-icon [name]="notif.icon" slot="start" [style.color]="notif.color" style="font-size: 1.3rem; margin-top: 0.2rem;"></ion-icon>
-          <ion-label>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-              <span style="font-weight: bold; color: #232323; font-size: 1.05rem;">{{notif.title}}</span>
-            <span style="font-size: 0.85rem; color: #bdbdbd; white-space: nowrap;">{{notif.time}}<span *ngIf="notif.unread" style="display: inline-block; width: 0.5rem; height: 0.5rem; background: #4d5ef2; border-radius: 50%; margin-left: 0.3rem;"></span></span>
-          </div>
-          <div style="color: #6b6b6b; font-size: 0.97rem; margin-top: 0.3rem;">{{notif.message}}</div>
-        </ion-label>
-      </ion-item> }
+        <ion-item-sliding>
+          <ion-item style="background: #fafbfc; align-items: flex-start; --padding-start: 1rem; --inner-padding-end: 1rem;">
+            <ion-icon [name]="notif.icon" slot="start" [style.color]="notif.color" style="font-size: 1.3rem; margin-top: 0.2rem;"></ion-icon>
+            <ion-label>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <span style="font-weight: bold; color: #232323; font-size: 1.05rem;">{{notif.title}}</span>
+                <span style="font-size: 0.85rem; color: #bdbdbd; white-space: nowrap;">{{notif.time}}
+                  @if (notif.unread) {
+                    <span style="display: inline-block; width: 0.5rem; height: 0.5rem; background: #4d5ef2; border-radius: 50%; margin-left: 0.3rem;"></span>
+                  }
+                </span>
+              </div>
+              <div style="color: #6b6b6b; font-size: 0.97rem; margin-top: 0.3rem;">{{notif.message}}</div>
+            </ion-label>
+          </ion-item>
+          
+          <ion-item-options side="end">
+            @if (notif.unread) {
+              <ion-item-option (click)="markAsRead(notif)" color="primary" style="--padding-start: 1rem; --padding-end: 1rem;">
+                <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+              </ion-item-option>
+            }
+            <ion-item-option (click)="deleteNotification(notif)" color="danger" style="--padding-start: 1rem; --padding-end: 1rem;">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+
+        </ion-item-sliding>
+      }
     </ion-list>
     
   </div>

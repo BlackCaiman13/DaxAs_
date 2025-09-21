@@ -1,0 +1,97 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/request"></ion-back-button>
+    </ion-buttons>
+    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;">Repair Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="background: #fff;">
+  <div style="padding: 1.2rem 1rem;">
+    <!-- Request ID et Status -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div style="color: #232323;">Request ID: REQ-2024-5678</div>
+      <ion-badge style="--background: #4d5ef2; --padding-start: 0.8rem; --padding-end: 0.8rem;">In Progress</ion-badge>
+    </div>
+
+    <!-- Device Info -->
+    <div style="margin-bottom: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+        <ion-icon name="phone-portrait-outline" style="font-size: 1.2rem; color: #4d5ef2;"></ion-icon>
+        <span style="font-weight: bold;">Smartphone - iPhone 13 Pro</span>
+      </div>
+      <div style="color: #6b6b6b;">Cracked Screen, Water Damage</div>
+    </div>
+
+    <!-- Photos -->
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Uploaded Photos</h3>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+        <img src="assets/device-photos/1653533682536.png" style="width: 100%; height: 150px; object-fit: cover; border-radius: 0.5rem;" alt="Cracked Screen">
+        <img src="assets/device-photos/How-To-Fix-Broken-Screen-On-Android-Phone-1024x623.jpg" style="width: 100%; height: 150px; object-fit: cover; border-radius: 0.5rem;" alt="Water Damage">
+      </div>
+    </div>
+
+    <!-- Problem Description -->
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Problem & Location</h3>
+      <div style="margin-bottom: 1rem;">
+        <div style="font-weight: bold; margin-bottom: 0.5rem;">Problem Description:</div>
+        <div style="color: #6b6b6b;">My iPhone fell into a puddle and the screen immediately cracked. Now, the screen is flickering, and there are dark spots. I also noticed some water under the camera lens. The phone charges but does not respond to touch.</div>
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <div style="font-weight: bold; margin-bottom: 0.5rem;">Collection Date:</div>
+        <div style="color: #6b6b6b;">
+          <ion-icon name="calendar-outline" style="margin-right: 0.5rem; vertical-align: middle;"></ion-icon>
+          July 15, 2024, 10:00 AM
+        </div>
+      </div>
+      <div>
+        <div style="font-weight: bold; margin-bottom: 0.5rem;">Location:</div>
+        <div style="color: #6b6b6b;">
+          <ion-icon name="location-outline" style="margin-right: 0.5rem; vertical-align: middle;"></ion-icon>
+          123 Tech Lane, Innovation City, 90210<br>
+          Front door, under the mat.
+        </div>
+      </div>
+    </div>
+
+    <!-- Repair Timeline -->
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Repair Timeline</h3>
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <ion-icon name="checkmark-circle" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
+          <div style="flex: 1;">Request Submitted</div>
+          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <ion-icon name="checkmark-circle" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
+          <div style="flex: 1;">Under Review</div>
+          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <ion-icon name="checkmark-circle" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
+          <div style="flex: 1;">Parts Ordered</div>
+          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <ion-icon name="radio-button-on" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
+          <div style="flex: 1;">Repair In Progress</div>
+          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <ion-icon name="ellipse-outline" style="color: #6b6b6b; font-size: 1.5rem;"></ion-icon>
+          <div style="flex: 1;">Quality Check</div>
+          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <ion-icon name="ellipse-outline" style="color: #6b6b6b; font-size: 1.5rem;"></ion-icon>
+          <div style="flex: 1;">Ready for Collection</div>
+          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+

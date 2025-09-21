@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonIcon, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-notifications',
   templateUrl: './notifications.page.html',
   styleUrls: ['./notifications.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonIcon, IonList, IonItem, IonLabel, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, CommonModule, FormsModule]
 })
 export class NotificationsPage implements OnInit {
   notifications = [
@@ -73,6 +73,19 @@ export class NotificationsPage implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    
+  }
+
+  markAsRead(notification: any) {
+    notification.unread = false;
+  }
+
+  deleteNotification(notification: any) {
+    const index = this.notifications.indexOf(notification);
+    if (index > -1) {
+      this.notifications.splice(index, 1);
+      
+    }
   }
 
 }

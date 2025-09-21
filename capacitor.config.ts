@@ -2,11 +2,11 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
-  appName: 'FixHo-app',
+  appName: 'FixHo',
   webDir: 'www',
   plugins: {
     LiveUpdates: {
-      appId: '7a761a3d',
+      appId: 'ci.daxas',
       channel: 'Production',
       autoUpdateMethod: 'background',
       maxVersions: 3

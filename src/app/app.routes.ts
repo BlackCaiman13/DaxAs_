@@ -21,6 +21,14 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () => import('./profile/profile.page').then((m) => m.ProfilePage),
       },
+      {
+        path: 'view-details',
+        loadComponent: () => import('./view-details/view-details.page').then((m) => m.ViewDetailsPage),
+      },
+      {
+        path: 'new-request',
+        loadComponent: () => import('./new-request/new-request.page').then((m) => m.NewRequestPage),
+      }
     ],
   },
   {
@@ -33,15 +41,9 @@ export const routes: Routes = [
     loadComponent: () => import('./onboarding/onboarding.page').then( m => m.OnboardingPage)
   },
   {
-    path: 'request',
-    loadComponent: () => import('./request/request.page').then( m => m.RequestPage)
+    path: 'new-request',
+    loadComponent: () => import('./new-request/new-request.page').then( m => m.NewRequestPage)
   },
-  {
-    path: 'notifications',
-    loadComponent: () => import('./notifications/notifications.page').then( m => m.NotificationsPage)
-  },
-  {
-    path: 'profile',
-    loadComponent: () => import('./profile/profile.page').then( m => m.ProfilePage)
-  },
+
+
 ];

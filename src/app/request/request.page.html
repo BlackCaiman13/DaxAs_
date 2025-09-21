@@ -20,7 +20,7 @@
               <span class="request-status" [ngStyle]="{'background': req.statusColor, 'color': req.statusTextColor}">{{req.status}}</span>
             }
             <div class="request-actions">
-              <a class="voir-plus">voir plus</a>
+              <a class="voir-plus" [routerLink]="['/tabs/view-details']">voir plus</a>
             </div>
           </div>
         </ion-item>

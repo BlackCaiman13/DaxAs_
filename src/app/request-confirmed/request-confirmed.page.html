@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;">Request Confirmed</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" style="background: #fff; text-align: center;">
+  <div style="padding: 2rem 1rem;">
+    <!-- Icon de confirmation -->
+    <div style="margin: 2rem 0;">
+      <div style="width: 80px; height: 80px; margin: 0 auto; border-radius: 50%; border: 3px solid #4d5ef2; display: flex; align-items: center; justify-content: center;">
+        <ion-icon name="checkmark-outline" style="font-size: 40px; color: #4d5ef2;"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Message de confirmation -->
+    <h2 style="font-weight: bold; font-size: 1.5rem; margin-bottom: 0.5rem;">Your repair request has been submitted!</h2>
+    <p style="color: #6b6b6b; margin-bottom: 2rem;">We've received your request and will provide an update soon.</p>
+
+    <!-- Résumé de la demande -->
+    <div style="background: #fafbfc; border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem;">
+      <h3 style="font-weight: bold; font-size: 1.2rem; margin-bottom: 1.5rem; text-align: left;">Request Summary</h3>
+      
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+        <span style="color: #6b6b6b;">Request ID</span>
+        <span style="font-weight: 500;">{{requestId}}</span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+        <span style="color: #6b6b6b;">Estimated Delivery</span>
+        <span style="font-weight: 500;">{{estimatedDelivery}}</span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+        <span style="color: #6b6b6b;">Diagnostic Fee</span>
+        <span style="font-weight: 500;">${{diagnosticFee.toFixed(2)}}</span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #6b6b6b;">Estimated Parts Fee</span>
+        <span style="font-weight: 500;">${{estimatedPartsFee.min.toFixed(2)}} - ${{estimatedPartsFee.max.toFixed(2)}}</span>
+      </div>
+    </div>
+
+    <!-- Bouton de suivi -->
+    <ion-button expand="block" (click)="trackRequest()" style="--border-radius: 0.5rem;">
+      Track Request
+      <ion-icon name="arrow-forward" slot="end"></ion-icon>
+    </ion-button>
+  </div>
+</ion-content>

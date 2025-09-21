@@ -1,0 +1,15 @@
+ion-toolbar {
+  ion-title {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  ion-buttons {
+    align-items: center;
+  }
+}
