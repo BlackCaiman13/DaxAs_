@@ -1,18 +1,20 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem; " >Dashboard</ion-title>
+<ion-header collapse="{{ platformInfo === 'ios' ? 'fade' : 'none' }}" class="{{ platformInfo === 'android' ? 'ion-no-border' : '' }}">
+  <ion-toolbar style="display: inline-flex;" >
+    <ion-title  >{{ userData?.name || 'Utilisateur' }}</ion-title>
+    <!-- <ion-avatar slot="end" style="margin-right: 0.5rem;" >
+      <img src="https://ionicframework.com/docs/img/demos/avatar.svg" style="width: 2rem; height: 2rem;"/>
+    </ion-avatar> -->
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" >
-  <div style="padding: 1rem 1rem 0 1rem;">
-    <h2 style="font-weight: bold; font-size: 1.4rem; margin-bottom: 1.5rem;">Salut, Alex!</h2>
-    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; margin-bottom: 1.5rem;">
-      <div style="flex: 1 1 100px; border-radius: 1rem; padding: 1rem;">
+  <div style="padding: 1rem 1rem 0 1rem;" class="home-container">
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; margin-bottom: 1.5rem; ">
+      <div style="flex: 1 1 100px; background: #780800; border-radius: 1rem; padding: 1rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
-          <ion-icon name="construct-outline" style="font-size: 1.2rem; color: #2b2b2b;"></ion-icon>
-          <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 1rem; color: #2b2b2b;">1</div>
-          <div style="font-size: 0.7rem; color: #2b2b2b;">En attente</div>
+          <ion-icon name="construct-outline" style="font-size: 1.2rem; color: #ffffff;"></ion-icon>
+          <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 1rem; color: #ffffff;">1</div>
+          <div style="font-size: 0.7rem; color: #ffffff;">En attente</div>
         </div>
       </div>
 
@@ -24,11 +26,11 @@
         </div>
       </div>
 
-      <div style="flex: 1 1 100px; border-radius: 1rem; padding: 1rem; ">
+      <div style="flex: 1 1 100px; background: #015810; border-radius: 1rem; padding: 1rem; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
-          <ion-icon name="checkmark-circle-outline" style="font-size: 1.2rem; color: #2b2b2b;"></ion-icon>
-          <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 1rem; color: #2b2b2b;">1</div>
-          <div style="font-size: 0.7rem; color: #2b2b2b;">Terminé</div>
+          <ion-icon name="checkmark-circle-outline" style="font-size: 1.2rem; color: #ffffff;"></ion-icon>
+          <div style="padding-top: 0.5rem; padding-bottom: 0.5rem; font-size: 1rem; color: #ffffff;">1</div>
+          <div style="font-size: 0.7rem; color: #ffffff;">Terminé</div>
         </div>
       </div>
     </div>
@@ -69,7 +71,7 @@
         <div style="display: flex; align-items: center;">
           <div style="margin-left: 0.75rem;">
             <div style="font-weight: bold;">Obtenir l'avis d'un expert</div>
-            <div style="color: #6b6b6b; font-size: 0.95rem;">Nous vous mettons en relation avec des techniciens de réparation certifiés en fonction de votre appareil et du type de problème.</div>
+            <div style="color: #6b6b6b; font-size: 0.95rem;">Nous vous mettons en relation avec nos techniciens de réparation certifiés en fonction de votre appareil et du type de problème.</div>
           </div>
         </div>
       </div>
@@ -90,5 +92,5 @@
         </div>
       </div>
     </div>
-    </div>
+  </div>
 </ion-content>

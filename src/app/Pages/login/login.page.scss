@@ -1,0 +1,244 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+ion-content {
+  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+  --keyboard-offset: 0 !important;
+}
+
+ion-header {
+  position: fixed;
+  top: env(safe-area-inset-top);
+
+  ion-toolbar {
+    --background: transparent;
+    --border-style: none;
+    --color: white;
+  }
+}
+
+.ios ion-content {
+  --padding-bottom: env(safe-area-inset-bottom);
+}
+
+.login-container {
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: min(2rem, 5vw);
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding-top: calc(env(safe-area-inset-top) + 4rem);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1.25rem;
+  padding: clamp(1rem, 5vw, 2rem);
+  box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+  margin: auto;
+  position: relative;
+  max-height: min(calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 8rem), 40rem);
+  overflow-y: auto;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: clamp(1rem, 4vw, 2rem);
+
+  img {
+    width: min(9.375rem, 40%);
+    height: auto;
+    margin-bottom: clamp(0.5rem, 2vw, 1rem);
+  }
+
+  h1 {
+    font-size: clamp(1.25rem, 5vw, 1.8rem);
+    color: var(--ion-color-primary);
+    margin: 0;
+    font-weight: 600;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin: 0.5rem 0 0;
+    font-size: clamp(0.875rem, 4vw, 1rem);
+  }
+}
+
+ion-item {
+  --background: transparent;
+  --border-color: var(--ion-color-medium);
+  --border-radius: 0.625rem;
+  --padding-start: 1rem;
+  margin-bottom: clamp(0.75rem, 2vw, 1rem);
+  font-size: clamp(0.875rem, 4vw, 1rem);
+
+  &.has-focus {
+    --border-color: var(--ion-color-primary);
+  }
+}
+
+ion-input {
+  --padding-start: 1rem !important;
+  font-size: clamp(0.875rem, 4vw, 1rem);
+}
+
+.password-toggle {
+  font-size: clamp(1rem, 4vw, 1.2rem);
+  color: var(--ion-color-medium);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  font-size: clamp(0.75rem, 3vw, 0.8rem);
+  margin: -0.5rem 0 0.75rem 1rem;
+}
+
+.login-button {
+  margin-top: clamp(0.75rem, 3vw, 1rem);
+  --border-radius: 0.625rem;
+  --box-shadow: 0 0.25rem 0.75rem rgba(var(--ion-color-primary-rgb), 0.3);
+  min-height: 2.75rem;
+  height: clamp(2.75rem, 8vw, 3rem);
+  font-size: clamp(1rem, 4vw, 1.1rem);
+  font-weight: 500;
+  width: 100%;
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: clamp(0.75rem, 3vw, 1rem);
+
+  a {
+    color: var(--ion-color-primary);
+    text-decoration: none;
+    font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+    padding: 0.5rem;
+    display: inline-block;
+  }
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: clamp(1.5rem, 5vw, 2rem);
+  color: var(--ion-color-medium);
+  font-size: clamp(0.875rem, 4vw, 1rem);
+
+  a {
+    color: var(--ion-color-primary);
+    font-weight: 500;
+    text-decoration: none;
+    padding: 0.5rem;
+    display: inline-block;
+  }
+}
+
+// Tablettes et petits écrans
+@media (min-width: 48rem) {
+  .login-container {
+    padding: 2rem;
+  }
+
+  .login-card {
+    max-width: 31.25rem;
+    margin: auto;
+  }
+}
+
+// Grands écrans
+@media (min-width: 64rem) {
+  .login-card {
+    max-width: 37.5rem;
+  }
+}
+
+// Gestion de la hauteur
+@media (max-height: 35rem) {
+  .login-container {
+    padding: 1rem;
+    padding-top: calc(env(safe-area-inset-top) + 1rem);
+  }
+  
+  .login-card {
+    padding: 1rem;
+    max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem);
+  }
+
+  .logo-container {
+    margin-bottom: 0.5rem;
+    
+    img {
+      width: min(4rem, 20%);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Gestion du clavier virtuel
+@media (max-height: 35rem) and (max-width: 30rem) {
+  ion-header {
+    display: none;
+  }
+
+  .login-container {
+    padding-top: 1rem;
+  }
+
+  .logo-container {
+    display: none;
+  }
+
+  .login-card {
+    background: transparent;
+    box-shadow: none;
+    padding: 0.5rem;
+  }
+
+  ion-item {
+    --background: rgba(255, 255, 255, 0.95);
+    margin-bottom: 0.5rem;
+  }
+}
+
+// Adaptation iOS
+.ios {
+  .content-under-keyboard {
+    padding-bottom: 0;
+  }
+
+  ion-item {
+    --highlight-height: 0;
+  }
+}
+
+// Support iPhone X et autres appareils avec encoche
+@supports (padding-top: env(safe-area-inset-top)) {
+  .login-container {
+    padding-top: calc(env(safe-area-inset-top) + 1rem);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 1rem);
+  }
+}
+.login-card {
+    max-width: 500px;
+    margin: 0 auto;
+}
+

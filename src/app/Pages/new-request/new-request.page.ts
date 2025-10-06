@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router } from '@angular/router';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
+import { OsServicesService } from 'src/app/Services/os-services/os-services.service';
 import {
   IonContent,
   IonHeader,
@@ -52,8 +53,9 @@ export class NewRequestPage {
   currentStep = 1;
   requestForm: FormGroup;
   selectedPhotos: string[] = [];
+  platformInfo: any;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private osServices: OsServicesService) {
     this.requestForm = this.fb.group({
       deviceType: ['', Validators.required],
       model: [''],
@@ -63,6 +65,10 @@ export class NewRequestPage {
       collectionDate: ['', Validators.required],
       problemDescription: ['', [Validators.required, Validators.maxLength(500)]]
     });
+  }
+
+  ngOnInit() {
+    this.platformInfo = this.osServices.getDeviceInfo().then(info => (this.platformInfo = info.platform));
   }
 
   nextStep() {

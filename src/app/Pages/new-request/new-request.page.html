@@ -1,9 +1,9 @@
-<ion-header [translucent]="true">
+<ion-header collapse="{{ platformInfo === 'ios' ? 'fade' : 'none' }}" class="{{ platformInfo === 'android' ? 'ion-no-border' : '' }}">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
-    <ion-title style="text-align: center; font-weight: bold; font-size: 1.3rem;">Nouvelle Demande</ion-title>
+    <ion-title style="text-align: center; ">Nouvelle Demande</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -116,7 +116,7 @@
          
 
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
-            <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Choisir une date</ion-label>
+            <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Choisir une date de collecte</ion-label>
              <ion-datetime presentation="date-time" [preferWheel]="true"></ion-datetime>
           </ion-item>
 

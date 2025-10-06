@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">FixHo</string>
-    <string name="title_activity_main">FixHo</string>
+    <string name="app_name">DaxAs</string>
+    <string name="title_activity_main">DaxAs</string>
     <string name="package_name">ci.daxas</string>
     <string name="custom_url_scheme">ci.daxas</string>
 </resources>

@@ -1,0 +1,99 @@
+<ion-content [fullscreen]="true">
+  <div class="signup-container">
+    <div class="signup-card">
+      <div class="logo-container">
+        <h1>Créer un compte</h1>
+        <p>Rejoignez DaxAs dès aujourd'hui</p>
+      </div>
+
+      <form [formGroup]="signupForm" (ngSubmit)="signUp()">
+
+        <!-- Nom d'utilisateur -->
+        <ion-item>
+          <ion-label position="floating">Nom d'utilisateur</ion-label>
+          <ion-input type="text" formControlName="username"></ion-input>
+        </ion-item>
+        @if (signupForm.get('username')?.touched && signupForm.get('username')?.hasError('required')) {
+          <div class="error-message">Le nom d'utilisateur est requis</div>
+        }
+
+        <!-- Téléphone -->
+        <ion-item>
+          <ion-label position="floating">Téléphone</ion-label>
+          <ion-input type="tel" formControlName="phone"></ion-input>
+        </ion-item>
+        @if (signupForm.get('phone')?.touched && signupForm.get('phone')?.hasError('required')) {
+          <div class="error-message">Le numéro de téléphone est requis</div>
+        }
+        @if (signupForm.get('phone')?.touched && signupForm.get('phone')?.hasError('pattern')) {
+          <div class="error-message">Numéro invalide</div>
+        }
+
+        <!-- Email -->
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+        @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('required')) {
+          <div class="error-message">L'email est requis</div>
+        }
+        @if (signupForm.get('email')?.touched && signupForm.get('email')?.hasError('email')) {
+          <div class="error-message">Veuillez entrer un email valide</div>
+        }
+
+        <!-- Mot de passe -->
+        <ion-item>
+          <ion-label position="floating">Mot de passe</ion-label>
+          <ion-input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password">
+          </ion-input>
+          <ion-icon
+            [name]="showPassword ? 'eye-off' : 'eye'"
+            slot="end"
+            class="password-toggle"
+            (click)="togglePassword('password')">
+          </ion-icon>
+        </ion-item>
+        @if (signupForm.get('password')?.touched && signupForm.get('password')?.hasError('required')) {
+          <div class="error-message">Le mot de passe est requis</div>
+        }
+        @if (signupForm.get('password')?.touched && signupForm.get('password')?.hasError('minlength')) {
+          <div class="error-message">Le mot de passe doit contenir au moins 6 caractères</div>
+        }
+
+        <!-- Confirmation mot de passe -->
+        <ion-item>
+          <ion-label position="floating">Confirmer le mot de passe</ion-label>
+          <ion-input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            formControlName="confirmPassword">
+          </ion-input>
+          <ion-icon
+            [name]="showConfirmPassword ? 'eye-off' : 'eye'"
+            slot="end"
+            class="password-toggle"
+            (click)="togglePassword('confirmPassword')">
+          </ion-icon>
+        </ion-item>
+        @if (signupForm.get('confirmPassword')?.touched && signupForm.hasError('mismatch')) {
+          <div class="error-message">Les mots de passe ne correspondent pas</div>
+        }
+
+        <!-- Bouton -->
+        <ion-button expand="block" class="signup-button" type="submit" [disabled]="!signupForm.valid || isLoading">
+          @if (isLoading) {
+            <ion-spinner name="circular"></ion-spinner>
+          } @else {
+            <span>S'inscrire</span>
+          }
+        </ion-button>
+
+        <!-- Lien login -->
+        <div class="login-link">
+          Déjà un compte ? <a (click)="goToLogin()">Se connecter</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>

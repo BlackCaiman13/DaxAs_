@@ -1,0 +1,60 @@
+
+<ion-content [fullscreen]="true">
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="avatar-container">
+        <div class="avatar">
+          {{ userInitials }}
+        </div>
+        <ion-icon name="camera" class="edit-avatar"></ion-icon>
+      </div>
+      <h2 class="profile-name">{{ userData?.name || 'Utilisateur' }}</h2>
+      <p class="profile-email">{{ userData?.email }}</p>
+    </div>
+
+    <div class="profile-card">
+      <div class="card-header">
+        <h3>Informations personnelles</h3>
+      </div>
+      
+      <div class="info-item">
+        <span class="label">Nom</span>
+        <div class="value-container">
+          <span class="value">{{ userData?.name || 'Non défini' }}</span>
+          <ion-icon name="create-outline" (click)="editName()"></ion-icon>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Email</span>
+        <div class="value-container">
+          <span class="value">{{ userData?.email }}</span>
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Téléphone</span>
+        <div class="value-container">
+          <span class="value">{{ userData?.phone || 'Non défini' }}</span>
+          <ion-icon name="create-outline" (click)="editPhone()"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <div class="card-header">
+        <h3>Paramètres</h3>
+      </div>
+      
+      <div class="info-item">
+        <span class="label">Notifications</span>
+        <ion-toggle [checked]="notificationsEnabled" (ionChange)="toggleNotifications($event)"></ion-toggle>
+      </div>
+    </div>
+
+    <ion-button expand="block" color="danger" class="logout-button" (click)="logout()">
+      <ion-icon name="log-out-outline" slot="start" ></ion-icon>
+      Se déconnecter
+    </ion-button>
+  </div>
+</ion-content>

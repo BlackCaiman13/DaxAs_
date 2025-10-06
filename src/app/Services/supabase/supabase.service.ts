@@ -1,0 +1,311 @@
+import { Injectable } from '@angular/core';
+import { LoadingController, ToastController } from '@ionic/angular';
+import { AuthChangeEvent, createClient, Session, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from 'src/environments/environment';
+
+export interface Profile {
+  id: string;
+  created_at?: string;
+  fullname: string | null;
+  phone: string | null;
+  avatar_url?: string | null;
+  role?: string | null;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class SupabaseService {
+  private supabase: SupabaseClient;
+
+  constructor(
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
+  ) {
+    console.log('Initialisation du service Supabase');
+
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        storage: sessionStorage,
+        storageKey: 'fixho-session'
+      }
+    });
+
+    // Écouter les changements d'état d'authentification
+    this.supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Événement d\'authentification:', event);
+      console.log('Session:', session);
+
+      if (event === 'SIGNED_IN') {
+        console.log('Utilisateur connecté');
+        this.saveSession(session);
+      } else if (event === 'SIGNED_OUT') {
+        console.log('Utilisateur déconnecté');
+        this.saveSession(null);
+      } else if (event === 'TOKEN_REFRESHED') {
+        console.log('Token rafraîchi');
+        this.saveSession(session);
+      }
+    });
+
+    // Restaurer la session au démarrage
+    this.restoreSession();
+  }
+
+  // 🔐 Restauration de session
+  private async restoreSession() {
+    console.log('Tentative de restauration de la session...');
+    try {
+      const { data: { session }, error } = await this.supabase.auth.getSession();
+
+      if (error) throw error;
+
+      if (session) {
+        console.log('Session restaurée avec succès');
+        this.saveSession(session);
+      } else {
+        console.log('Aucune session à restaurer');
+        const savedSession = sessionStorage.getItem('fixho-session');
+        if (savedSession) {
+          console.log('Session trouvée dans le stockage, tentative de restauration...');
+          try {
+            const parsedSession = JSON.parse(savedSession);
+            const { data, error } = await this.supabase.auth.setSession({
+              access_token: parsedSession.access_token,
+              refresh_token: parsedSession.refresh_token
+            });
+
+            if (error) throw error;
+
+            if (!data.session) {
+              console.log('Session expirée, tentative de rafraîchissement...');
+              await this.refreshSession();
+            } else {
+              console.log('Session restaurée depuis le stockage');
+            }
+          } catch (e) {
+            console.error('Erreur lors de la restauration de la session depuis le stockage:', e);
+            sessionStorage.removeItem('fixho-session');
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors de la restauration de la session:', error);
+      sessionStorage.removeItem('fixho-session');
+    }
+  }
+
+  // 👤 Récupération utilisateur
+  async getUser() {
+    try {
+      const session = await this.getSession();
+      if (!session) return null;
+
+      const { data: { user }, error } = await this.supabase.auth.getUser();
+      if (error) throw error;
+
+      return user;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+      return null;
+    }
+  }
+
+  async getSession() {
+    try {
+      const { data: { session }, error } = await this.supabase.auth.getSession();
+      if (error) throw error;
+      if (!session) return await this.refreshSession();
+      return session;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la session:', error);
+      return null;
+    }
+  }
+
+  // 📝 Mise à jour ou création de profil
+  async updateProfile(profile: Profile) {
+    try {
+      const { data, error } = await this.supabase
+        .from('profiles')
+        .upsert({
+          id: profile.id,
+          fullname: profile.fullname,
+          phone: profile.phone,
+          avatar_url: profile.avatar_url,
+          role: profile.role
+        });
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du profil :', error);
+      await this.handleError(error as Error);
+      return null;
+    }
+  }
+
+  // ✉️ Inscription d'un nouvel utilisateur
+  async signUp(email: string, password: string, fullname?: string, phone?: string) {
+    try {
+      // Vérification des données d'entrée
+      if (!email || !password) {
+        throw new Error('Email et mot de passe requis');
+      }
+
+      console.log('Début de l\'inscription pour:', email);
+      
+      // Inscription avec les données de profil dans les metadata
+      const { data: authData, error: authError } = await this.supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            fullname: fullname || null,
+            phone: phone || null
+          }
+        }
+      });
+
+      if (authError) {
+        console.error('Erreur d\'authentification:', authError);
+        throw authError;
+      }
+
+      if (!authData.user) {
+        console.error('Pas de données utilisateur reçues');
+        throw new Error('Impossible de créer l\'utilisateur');
+      }
+
+      console.log('Inscription réussie, id:', authData.user.id);
+
+      return { data: authData, error: null };
+    } catch (error) {
+      console.error('Erreur d\'inscription:', error);
+      await this.handleError(error as Error);
+      return { data: null, error };
+    }
+  }
+
+  // � Application des données de profil en attente
+  private async applyPendingProfileData(userId: string) {
+    const pendingDataKey = `pending-profile-${userId}`;
+    const pendingData = sessionStorage.getItem(pendingDataKey);
+    
+    if (pendingData) {
+      try {
+        console.log('Application des données de profil en attente');
+        const profileData = JSON.parse(pendingData);
+        
+        const { error: updateError } = await this.supabase
+          .from('profiles')
+          .update(profileData)
+          .eq('id', userId);
+
+        if (updateError) {
+          console.warn('Erreur lors de la mise à jour différée du profil:', updateError);
+        } else {
+          console.log('Mise à jour différée du profil réussie');
+          sessionStorage.removeItem(pendingDataKey);
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'application des données de profil en attente:', error);
+      }
+    }
+  }
+
+  // �🔐 Connexion
+  async signIn(email: string, password: string) {
+    try {
+      const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      if (data.session) {
+        this.saveSession(data.session);
+        if (data.user) {
+          await this.applyPendingProfileData(data.user.id);
+        }
+      }
+      
+      const user = await this.getUser();
+      if (!user) throw new Error('Impossible de récupérer les informations de l\'utilisateur');
+
+      return { data, error: null };
+    } catch (error) {
+      console.error('Erreur de connexion:', error);
+      await this.handleError(error as Error);
+      return { data: null, error };
+    }
+  }
+
+  // 🚪 Déconnexion
+  async signOut() {
+    try {
+      await this.supabase.auth.signOut();
+      sessionStorage.removeItem('fixho-session');
+    } catch (error) {
+      await this.handleError(error as Error);
+    }
+  }
+
+  // 🔄 Rafraîchir la session
+  async refreshSession() {
+    try {
+      const { data: { session }, error } = await this.supabase.auth.refreshSession();
+      if (error) throw error;
+      if (session) this.saveSession(session);
+      return session;
+    } catch (error) {
+      sessionStorage.removeItem('fixho-session');
+      await this.handleError(error as Error);
+      return null;
+    }
+  }
+
+  // 🌍 Utilitaires
+  authChanges(callback: (event: AuthChangeEvent, session: Session | null) => void) {
+    return this.supabase.auth.onAuthStateChange((event, session) => {
+      this.saveSession(session);
+      callback(event, session);
+    });
+  }
+
+  private saveSession(session: Session | null) {
+    console.log('Sauvegarde de la session:', session ? 'présente' : 'null');
+    if (session) {
+      const sessionData = {
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+        expires_at: session.expires_at
+      };
+      sessionStorage.setItem('fixho-session', JSON.stringify(sessionData));
+    } else {
+      sessionStorage.removeItem('fixho-session');
+    }
+  }
+
+  async handleError(error: Error) {
+    const toast = await this.toastCtrl.create({
+      message: error.message,
+      duration: 3000,
+      color: 'danger'
+    });
+    await toast.present();
+  }
+
+  async showLoading(message: string) {
+    const loading = await this.loadingCtrl.create({ message, spinner: 'circular' });
+    await loading.present();
+    return loading;
+  }
+
+  downLoadImage(path: string) {
+    return this.supabase.storage.from('avatars').download(path);
+  }
+
+  uploadAvatar(filePath: string, file: File) {
+    return this.supabase.storage.from('avatars').upload(filePath, file);
+  }
+}

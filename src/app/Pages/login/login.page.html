@@ -1,0 +1,60 @@
+<ion-content>
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo-container">
+        <img src="../../../assets/icon-only.png" alt="DaxAs Logo" />
+        <h1>Bienvenue sur DaxAs</h1>
+        <p>Connectez-vous pour gérer vos réparations</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']) {
+          <div class="error-message">
+            L'email est requis
+          </div>
+        }
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']) {
+          <div class="error-message">
+            Veuillez entrer un email valide
+          </div>
+        }
+
+        <ion-item>
+          <ion-label position="floating">Mot de passe</ion-label>
+          <ion-input [type]="showPassword ? 'text' : 'password'" formControlName="password"></ion-input>
+          <ion-icon 
+            [name]="showPassword ? 'eye-off' : 'eye'"
+            slot="end"
+            class="password-toggle"
+            (click)="togglePassword()">
+          </ion-icon>
+        </ion-item>
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']) {
+          <div class="error-message">
+            Le mot de passe est requis
+          </div>
+        }
+
+        <ion-button expand="block" class="login-button" type="submit" [disabled]="!loginForm.valid || loading">
+          @if (loading) {
+            <ion-spinner name="circular"></ion-spinner>
+          } @else {
+            <span>Se connecter</span>
+          }
+        </ion-button>
+
+        <div class="forgot-password">
+          <a>Mot de passe oublié ?</a>
+        </div>
+
+        <div class="signup-link">
+          Pas encore de compte ? <a routerLink="/signup">S'inscrire</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</ion-content>
