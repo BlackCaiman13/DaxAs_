@@ -1,9 +1,9 @@
 <ion-header collapse="{{ platformInfo === 'ios' ? 'fade' : 'none' }}" class="{{ platformInfo === 'android' ? 'ion-no-border' : '' }}">
-  <ion-toolbar style="display: inline-flex;" >
-    <ion-title  >{{ userData?.name || 'Utilisateur' }}</ion-title>
-    <!-- <ion-avatar slot="end" style="margin-right: 0.5rem;" >
-      <img src="https://ionicframework.com/docs/img/demos/avatar.svg" style="width: 2rem; height: 2rem;"/>
-    </ion-avatar> -->
+  <ion-toolbar >
+    <div class="header-content" >
+      <ion-title  >{{ userData?.name || 'Utilisateur' }}</ion-title>
+      <app-avatar [avatar]="userData?.avatar" [size]="40" [centered]="false" style="margin-right: 1rem;" ></app-avatar>
+    </div>
   </ion-toolbar>
 </ion-header>
 
@@ -53,7 +53,7 @@
       </div>
       <div style="background: #fff; border-radius: 1rem; padding: 1.5rem 0; text-align: center; box-shadow: 0 0.125rem 0.5rem #e9eaf0;">
         <ion-icon name="watch-outline" style="font-size: 2.2rem; " color="primary"></ion-icon>
-        <div style="margin-top: 0.5rem; color: #232323; font-weight: 500;">Smartwatch</div>
+        <div style="margin-top: 0.5rem; color: #232323; font-weight: 500;">Electroménager</div>
       </div>
     </div>
 

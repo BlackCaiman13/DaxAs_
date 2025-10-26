@@ -1,0 +1,5 @@
+<ion-avatar [ngStyle]="{'margin': centered ? 'auto' : '0'}" [style.--avatar-size]="(size || 100) + 'px'">
+  <img [src]="avatar || defaultAvatar" 
+       [alt]="'Avatar de ' + avatar"
+       (error)="onImageError()">
+</ion-avatar>

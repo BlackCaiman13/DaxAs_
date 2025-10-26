@@ -3,10 +3,8 @@
   <div class="profile-container">
     <div class="profile-header">
       <div class="avatar-container">
-        <div class="avatar">
-          {{ userInitials }}
-        </div>
-        <ion-icon name="camera" class="edit-avatar"></ion-icon>
+        <app-avatar [avatar]="" [size]="130"></app-avatar>
+        
       </div>
       <h2 class="profile-name">{{ userData?.name || 'Utilisateur' }}</h2>
       <p class="profile-email">{{ userData?.email }}</p>
@@ -52,7 +50,7 @@
       </div>
     </div>
 
-    <ion-button expand="block" color="danger" class="logout-button" (click)="logout()">
+    <ion-button expand="block" class="logout-button" (click)="logout()">
       <ion-icon name="log-out-outline" slot="start" ></ion-icon>
       Se déconnecter
     </ion-button>

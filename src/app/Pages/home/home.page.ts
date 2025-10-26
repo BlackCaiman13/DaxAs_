@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonButton, IonIcon, IonToolbar, IonHeader, IonTitle, IonAvatar } from '@ionic/angular/standalone';
 import { OsServicesService } from 'src/app/Services/os-services/os-services.service';
 import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
+import { AvatarComponent } from 'src/app/components/avatar/avatar.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonTitle, IonHeader, IonContent, IonButton, IonIcon, IonToolbar, CommonModule, FormsModule],
+  imports: [IonTitle, IonHeader, IonContent, IonButton, IonIcon, IonToolbar, CommonModule, FormsModule, AvatarComponent],
 })
 export class HomePage {
   
@@ -31,7 +32,8 @@ export class HomePage {
         id: user.id,
         email: user.email,
         name: user.user_metadata?.['fullname'] || 'Utilisateur',
-        phone: user.user_metadata?.['phone']
+        phone: user.user_metadata?.['phone'],
+        avatar: user.user_metadata?.['avatar_url'] || null
       };
     }
   }

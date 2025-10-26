@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonIcon, IonButton } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
+import { Request, RequestStatus } from 'src/app/Models';
+import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
 
 @Component({
   selector: 'app-request',

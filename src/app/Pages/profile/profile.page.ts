@@ -7,9 +7,12 @@ import {
   IonToggle,
   IonButton,
   AlertController,
+  IonAvatar
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { SupabaseService } from '../../Services/supabase/supabase.service';
+import { AvatarComponent } from 'src/app/components/avatar/avatar.component';
+import { Profile } from 'src/app/Models';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +25,8 @@ import { SupabaseService } from '../../Services/supabase/supabase.service';
     IonToggle,
     IonButton,
     CommonModule, 
-    FormsModule
+    FormsModule,
+    AvatarComponent
   ]
 })
 export class ProfilePage implements OnInit {
@@ -44,7 +48,8 @@ export class ProfilePage implements OnInit {
         id: user.id,
         email: user.email,
         name: user.user_metadata?.['fullname'] || 'Utilisateur',
-        phone: user.user_metadata?.['phone']
+        phone: user.user_metadata?.['phone'] || null,
+        avatar: user.user_metadata?.['avatar_url'] || null
       };
     }
   }
@@ -97,4 +102,20 @@ export class ProfilePage implements OnInit {
     // TODO: Implémenter la logique de gestion des notifications
     console.log('Notifications:', this.notificationsEnabled);
   }
-}
+
+  async editAvatar() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    fileInput.click();
+
+    fileInput.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        await this.supabaseService.uploadUserAvatar(file, this.userData.id);
+      }
+    };
+  }
+  }

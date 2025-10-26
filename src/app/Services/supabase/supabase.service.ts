@@ -2,15 +2,7 @@ import { Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { AuthChangeEvent, createClient, Session, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
-
-export interface Profile {
-  id: string;
-  created_at?: string;
-  fullname: string | null;
-  phone: string | null;
-  avatar_url?: string | null;
-  role?: string | null;
-}
+import { Profile, Device, Request, RequestPhoto, Notification } from 'src/app/Models';
 
 @Injectable({
   providedIn: 'root',
@@ -28,8 +20,10 @@ export class SupabaseService {
       auth: {
         autoRefreshToken: true,
         persistSession: true,
-        storage: sessionStorage,
-        storageKey: 'fixho-session'
+        storage: localStorage,
+        storageKey: 'fixho-session',
+        detectSessionInUrl: true,
+        flowType: 'pkce'
       }
     });
 
@@ -301,11 +295,261 @@ export class SupabaseService {
     return loading;
   }
 
-  downLoadImage(path: string) {
-    return this.supabase.storage.from('avatars').download(path);
+
+  private async compressImage(file: File, maxWidth = 200, maxHeight = 200, quality = 0.8): Promise<File> {
+    const imageBitmap = await createImageBitmap(file);
+
+    // Calcul des nouvelles dimensions
+    let { width, height } = imageBitmap;
+    if (width > height) {
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+    } else {
+      if (height > maxHeight) {
+        width = Math.round((width * maxHeight) / height);
+        height = maxHeight;
+      }
+    }
+
+    // Dessine l'image sur un canvas redimensionné
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Impossible de créer le contexte canvas');
+    ctx.drawImage(imageBitmap, 0, 0, width, height);
+
+    // Convertit le canvas en Blob compressé
+    const blob: Blob = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b as Blob), 'image/jpeg', quality)
+    );
+
+    return new File([blob], file.name, { type: 'image/jpeg' });
   }
 
-  uploadAvatar(filePath: string, file: File) {
-    return this.supabase.storage.from('avatars').upload(filePath, file);
+  /**
+   * Upload l'image de profil de l'utilisateur
+   */
+  async uploadUserAvatar(file: File, userId: string) {
+    try {
+      // Compression
+      const compressedFile = await this.compressImage(file);
+
+      // Upload dans le bucket avatars
+      const filePath = `avatars/${userId}.jpg`;
+
+      const { data, error } = await this.supabase.storage
+        .from('user_avatar')
+        .upload(filePath, compressedFile, {
+          upsert: true, // permet d'écraser l'ancienne image
+          cacheControl: '3600',
+          contentType: 'image/jpeg',
+        });
+
+      if (error) {
+        console.error('Erreur upload avatar:', error);
+        throw error;
+      }
+
+      console.log(' Avatar uploadé avec succès:', data);
+      return data;
+    } catch (err) {
+      console.error('Erreur lors de l’upload de l’avatar:', err);
+      throw err;
+    }
+  }
+
+  /**
+   * Récupère l'URL publique de l'avatar
+   */
+  // async getAvatarUrl(userId: string): Promise<string> {
+  //   try {
+  //     const { data } = this.supabase.storage
+  //       .from('user_avatar')
+  //       .getPublicUrl(`avatars/${userId}.jpg`);
+
+  //     console.log('URL de l\'avatar:', data.publicUrl);
+  //     return data.publicUrl;
+  //   } catch (error) {
+  //     console.error('Erreur lors de la récupération de l\'URL de l\'avatar:', error);
+  //     return this.defaultAvatarUrl;
+  //   }
+  // }
+
+  // private get defaultAvatarUrl(): string {
+  //   return 'assets/images/default-avatar.svg';
+  // }
+
+  // 📱 Gestion des appareils
+  async getUserDevices(userId: string): Promise<Device[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('devices')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Erreur lors de la récupération des appareils:', error);
+      return [];
+    }
+  }
+
+  async addDevice(device: Partial<Device>): Promise<Device | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('devices')
+        .insert(device)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de l\'appareil:', error);
+      await this.handleError(error as Error);
+      return null;
+    }
+  }
+
+  // 📝 Gestion des requêtes
+  async getRequests(userId: string): Promise<Request[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('requests')
+        .select('*, device:devices(*), photos:request_photos(*)')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Erreur lors de la récupération des requêtes:', error);
+      return [];
+    }
+  }
+
+  async createRequest(request: Partial<Request>): Promise<Request | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('requests')
+        .insert(request)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la création de la requête:', error);
+      await this.handleError(error as Error);
+      return null;
+    }
+  }
+
+  async uploadRequestPhotos(files: File[], requestId: string): Promise<RequestPhoto[]> {
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const compressedFile = await this.compressImage(file, 800, 800, 0.8);
+        const filePath = `requests/${requestId}/${file.name}`;
+
+        const { data: uploadData, error: uploadError } = await this.supabase.storage
+          .from('request_photos')
+          .upload(filePath, compressedFile, {
+            upsert: true,
+            cacheControl: '3600',
+            contentType: 'image/jpeg'
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = this.supabase.storage
+          .from('request_photos')
+          .getPublicUrl(filePath);
+
+        const { data: photoData, error: insertError } = await this.supabase
+          .from('request_photos')
+          .insert({
+            request_id: requestId,
+            photo_url: urlData.publicUrl,
+            file_path: filePath
+          })
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        return photoData;
+      });
+
+      const photos = await Promise.all(uploadPromises);
+      return photos;
+    } catch (error) {
+      console.error('Erreur lors de l\'upload des photos:', error);
+      await this.handleError(error as Error);
+      return [];
+    }
+  }
+
+  // 🔔 Gestion des notifications
+  async getNotifications(userId: string): Promise<Notification[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Erreur lors de la récupération des notifications:', error);
+      return [];
+    }
+  }
+
+  async markNotificationAsRead(notificationId: string): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('notifications')
+        .update({ read: true })
+        .eq('id', notificationId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Erreur lors du marquage de la notification:', error);
+      await this.handleError(error as Error);
+    }
+  }
+
+  // ⚡ Abonnements en temps réel
+  subscribeToNotifications(userId: string, callback: (notification: Notification) => void) {
+    return this.supabase
+      .channel('notifications')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${userId}`
+      }, (payload) => {
+        callback(payload.new as Notification);
+      })
+      .subscribe();
+  }
+
+  subscribeToRequestUpdates(userId: string, callback: (request: Request) => void) {
+    return this.supabase
+      .channel('requests')
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'requests',
+        filter: `user_id=eq.${userId}`
+      }, (payload) => {
+        callback(payload.new as Request);
+      })
+      .subscribe();
   }
 }
