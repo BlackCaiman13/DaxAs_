@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonIcon, IonButton, IonSpinner } from '@ionic/angular/standalone';
@@ -13,14 +13,22 @@ import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
   standalone: true,
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonButton, IonSpinner, IonIcon, CommonModule, FormsModule, RouterLink]
 })
-export class RequestPage implements OnInit {
+export class RequestPage implements OnInit, OnDestroy {
   requests: Request[] = [];
   loading = true;
+  private requestSubscription: any;
 
   constructor(private supabaseService: SupabaseService) { }
 
   async ngOnInit() {
     await this.loadRequests();
+    await this.subscribeToRequestUpdates();
+  }
+
+  ngOnDestroy() {
+    if (this.requestSubscription) {
+      this.requestSubscription.unsubscribe();
+    }
   }
 
   async loadRequests() {
@@ -34,6 +42,22 @@ export class RequestPage implements OnInit {
       console.error('Erreur lors du chargement des demandes:', error);
     } finally {
       this.loading = false;
+    }
+  }
+
+  async subscribeToRequestUpdates() {
+    const user = await this.supabaseService.getUser();
+    if (user) {
+      this.requestSubscription = this.supabaseService.subscribeToRequestUpdates(
+        user.id,
+        (updatedRequest) => {
+          console.log('Demande mise à jour:', updatedRequest);
+          const index = this.requests.findIndex(r => r.id === updatedRequest.id);
+          if (index !== -1) {
+            this.requests[index] = updatedRequest;
+          }
+        }
+      );
     }
   }
 

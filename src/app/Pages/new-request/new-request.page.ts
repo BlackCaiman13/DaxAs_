@@ -53,6 +53,7 @@ export class NewRequestPage {
   currentStep = 1;
   requestForm: FormGroup;
   selectedPhotos: string[] = [];
+  photoFiles: File[] = [];
   platformInfo: any;
 
   constructor(private fb: FormBuilder, private router: Router, private osServices: OsServicesService) {
@@ -103,16 +104,27 @@ export class NewRequestPage {
         status: 'pending'
       });
 
-      if (request) {
-        this.router.navigate(['/tabs/request-confirmed'], {
-          state: {
-            requestId: request.id,
-            formData: this.requestForm.value
-          }
-        });
-      } else {
+      if (!request) {
         throw new Error('Erreur lors de la création de la demande');
       }
+
+      if (this.photoFiles.length > 0) {
+        loading.message = 'Upload des photos...';
+        await this.osServices.supabaseService.uploadRequestPhotos(this.photoFiles, request.id.toString());
+      }
+
+      await this.osServices.supabaseService.createNotification(user.id, {
+        title: 'Demande reçue',
+        message: `Votre demande de réparation pour ${request.model} a été reçue avec succès. Référence: #${request.id}`,
+        is_read: false
+      });
+
+      this.router.navigate(['/tabs/request-confirmed'], {
+        state: {
+          requestId: request.id,
+          formData: this.requestForm.value
+        }
+      });
     } catch (error: any) {
       console.error('Erreur lors de la soumission:', error);
       await this.osServices.showToast(error.message || 'Erreur lors de la création de la demande', 'danger');
@@ -141,7 +153,12 @@ export class NewRequestPage {
 
       if (image.webPath) {
         this.selectedPhotos.push(image.webPath);
-        // Met à jour le contrôle du formulaire
+
+        const response = await fetch(image.webPath);
+        const blob = await response.blob();
+        const file = new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+        this.photoFiles.push(file);
+
         this.requestForm.patchValue({ photos: this.selectedPhotos });
       }
     } catch (error) {
@@ -151,7 +168,7 @@ export class NewRequestPage {
 
   removePhoto(index: number) {
     this.selectedPhotos.splice(index, 1);
-    // Met à jour le contrôle du formulaire
+    this.photoFiles.splice(index, 1);
     this.requestForm.patchValue({ photos: this.selectedPhotos });
   }
 

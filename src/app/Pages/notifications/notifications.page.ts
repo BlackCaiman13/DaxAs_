@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonSpinner } from '@ionic/angular/standalone';
@@ -12,14 +12,22 @@ import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
   standalone: true,
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonSpinner, CommonModule, FormsModule]
 })
-export class NotificationsPage implements OnInit {
+export class NotificationsPage implements OnInit, OnDestroy {
   notifications: Notification[] = [];
   loading = true;
+  private notificationSubscription: any;
 
   constructor(private supabaseService: SupabaseService) { }
 
   async ngOnInit() {
     await this.loadNotifications();
+    await this.subscribeToNewNotifications();
+  }
+
+  ngOnDestroy() {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
   }
 
   async loadNotifications() {
@@ -33,6 +41,19 @@ export class NotificationsPage implements OnInit {
       console.error('Erreur lors du chargement des notifications:', error);
     } finally {
       this.loading = false;
+    }
+  }
+
+  async subscribeToNewNotifications() {
+    const user = await this.supabaseService.getUser();
+    if (user) {
+      this.notificationSubscription = this.supabaseService.subscribeToNotifications(
+        user.id,
+        (newNotification) => {
+          console.log('Nouvelle notification reçue:', newNotification);
+          this.notifications.unshift(newNotification);
+        }
+      );
     }
   }
 

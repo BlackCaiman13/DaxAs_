@@ -514,13 +514,34 @@ export class SupabaseService {
     try {
       const { error } = await this.supabase
         .from('notifications')
-        .update({ read: true })
+        .update({ is_read: true })
         .eq('id', notificationId);
 
       if (error) throw error;
     } catch (error) {
       console.error('Erreur lors du marquage de la notification:', error);
       await this.handleError(error as Error);
+    }
+  }
+
+  async createNotification(userId: string, notification: Partial<Notification>): Promise<Notification | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('notifications')
+        .insert({
+          user_id: userId,
+          title: notification.title,
+          message: notification.message,
+          is_read: notification.is_read || false
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la création de la notification:', error);
+      return null;
     }
   }
 
