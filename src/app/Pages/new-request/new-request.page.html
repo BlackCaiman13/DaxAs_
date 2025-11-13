@@ -29,10 +29,13 @@
           
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
             <ion-label position="stacked">Type d'appareil</ion-label>
-            <ion-select aria-label="Fruit" interface="popover" placeholder="Selectionnez un type d'appareil">
-            <ion-select-option value="apples">Smartphone</ion-select-option>
-            <ion-select-option value="oranges">Ordinateur</ion-select-option>
-            <ion-select-option value="bananas">Tablette</ion-select-option>
+            <ion-select formControlName="deviceType" interface="popover" placeholder="Selectionnez un type d'appareil">
+            <ion-select-option value="Smartphone">Smartphone</ion-select-option>
+            <ion-select-option value="Ordinateur">Ordinateur</ion-select-option>
+            <ion-select-option value="Tablette">Tablette</ion-select-option>
+            <ion-select-option value="Montre connectée">Montre connectée</ion-select-option>
+            <ion-select-option value="Écouteurs">Écouteurs</ion-select-option>
+            <ion-select-option value="Console de jeu">Console de jeu</ion-select-option>
             </ion-select>
           </ion-item>
 
@@ -117,7 +120,7 @@
 
           <ion-item style="--padding-start: 0; margin-bottom: 1rem;">
             <ion-label position="stacked" style="color: #232323; font-weight: 500; margin-bottom: 0.5rem;">Choisir une date de collecte</ion-label>
-             <ion-datetime presentation="date-time" [preferWheel]="true"></ion-datetime>
+             <ion-datetime formControlName="collectionDate" presentation="date-time" [preferWheel]="true"></ion-datetime>
           </ion-item>
 
          

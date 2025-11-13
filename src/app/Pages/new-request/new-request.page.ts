@@ -76,8 +76,25 @@ export class NewRequestPage {
     if (this.currentStep < 3) {
       this.currentStep++;
     } else {
+      console.log('Formulaire valide?', this.requestForm.valid);
+      console.log('Valeurs du formulaire:', this.requestForm.value);
+      console.log('Erreurs du formulaire:', this.requestForm.errors);
+
       if (this.requestForm.valid) {
         await this.submitRequest();
+      } else {
+        const invalidControls: string[] = [];
+        Object.keys(this.requestForm.controls).forEach(key => {
+          const control = this.requestForm.get(key);
+          if (control && control.invalid) {
+            invalidControls.push(key);
+          }
+        });
+
+        await this.osServices.showToast(
+          `Veuillez remplir tous les champs obligatoires: ${invalidControls.join(', ')}`,
+          'warning'
+        );
       }
     }
   }
