@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonIcon, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonIcon, IonButton, IonSpinner } from '@ionic/angular/standalone';
 import { RouterLink } from '@angular/router';
 import { Request, RequestStatus } from 'src/app/Models';
 import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
@@ -11,43 +11,50 @@ import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
   templateUrl: './request.page.html',
   styleUrls: ['./request.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonButton, CommonModule, FormsModule, RouterLink]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonButton, IonSpinner, IonIcon, CommonModule, FormsModule, RouterLink]
 })
 export class RequestPage implements OnInit {
-  requests = [
-    {
-      title: 'iPhone 13 Screen Repair',
-      id: 'RF789012',
-      status: 'En cours',
-      statusColor: '#c48a1b',
-      statusTextColor: '#fff'
-    },
-    {
-      title: 'MacBook Pro Battery Replacement',
-      id: 'RF789013',
-      status: '',
-      statusColor: '',
-      statusTextColor: ''
-    },
-    {
-      title: 'Smartwatch Glass Repair',
-      id: 'RF789014',
-      status: 'En attente',
-      statusColor: '#4d5ef2',
-      statusTextColor: '#fff'
-    },
-    {
-      title: 'Desktop PC Virus Removal',
-      id: 'RF789015',
-      status: 'annulé',
-      statusColor: '#ff3b30',
-      statusTextColor: '#fff'
+  requests: Request[] = [];
+  loading = true;
+
+  constructor(private supabaseService: SupabaseService) { }
+
+  async ngOnInit() {
+    await this.loadRequests();
+  }
+
+  async loadRequests() {
+    this.loading = true;
+    try {
+      const user = await this.supabaseService.getUser();
+      if (user) {
+        this.requests = await this.supabaseService.getRequests(user.id);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des demandes:', error);
+    } finally {
+      this.loading = false;
     }
-  ];
+  }
 
-  constructor() { }
+  getStatusLabel(status: RequestStatus): string {
+    const statusMap: Record<RequestStatus, string> = {
+      'pending': 'En attente',
+      'in_progress': 'En cours',
+      'completed': 'Terminé',
+      'cancelled': 'Annulé'
+    };
+    return statusMap[status] || status;
+  }
 
-  ngOnInit() {
+  getStatusColor(status: RequestStatus): string {
+    const colorMap: Record<RequestStatus, string> = {
+      'pending': '#4d5ef2',
+      'in_progress': '#c48a1b',
+      'completed': '#34c759',
+      'cancelled': '#ff3b30'
+    };
+    return colorMap[status] || '#232323';
   }
 
 }

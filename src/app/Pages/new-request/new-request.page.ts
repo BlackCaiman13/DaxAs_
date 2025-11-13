@@ -71,18 +71,53 @@ export class NewRequestPage {
     this.platformInfo = this.osServices.getDeviceInfo().then(info => (this.platformInfo = info.platform));
   }
 
-  nextStep() {
+  async nextStep() {
     if (this.currentStep < 3) {
       this.currentStep++;
     } else {
       if (this.requestForm.valid) {
-        // Met à jour les photos dans le formulaire avant de naviguer
-        this.requestForm.patchValue({ photos: this.selectedPhotos });
-        
+        await this.submitRequest();
       }
-      this.router.navigate(['/tabs/request-confirmed'], {
-          state: { formData: this.requestForm.value }
+    }
+  }
+
+  async submitRequest() {
+    const loading = await this.osServices.showLoading('Création de la demande...');
+
+    try {
+      const user = await this.osServices.supabaseService.getUser();
+      if (!user) {
+        throw new Error('Utilisateur non connecté');
+      }
+
+      const formValue = this.requestForm.value;
+
+      const request = await this.osServices.supabaseService.createRequest({
+        user_id: user.id,
+        device_id: null,
+        model: formValue.deviceType + (formValue.model ? ' ' + formValue.model : ''),
+        problem_description: formValue.problemDescription,
+        location: formValue.location,
+        location_details: formValue.locationDetails,
+        scheduled_at: formValue.collectionDate ? new Date(formValue.collectionDate) : null,
+        status: 'pending'
+      });
+
+      if (request) {
+        this.router.navigate(['/tabs/request-confirmed'], {
+          state: {
+            requestId: request.id,
+            formData: this.requestForm.value
+          }
         });
+      } else {
+        throw new Error('Erreur lors de la création de la demande');
+      }
+    } catch (error: any) {
+      console.error('Erreur lors de la soumission:', error);
+      await this.osServices.showToast(error.message || 'Erreur lors de la création de la demande', 'danger');
+    } finally {
+      loading.dismiss();
     }
   }
 
