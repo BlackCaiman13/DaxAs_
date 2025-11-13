@@ -148,7 +148,8 @@ export class NewRequestPage {
         promptLabelPhoto: 'Choisir depuis la galerie',
         promptLabelPicture: 'Prendre une photo',
         width: 1024,
-        correctOrientation: true
+        correctOrientation: true,
+        webUseInput: true
       });
 
       if (image.webPath) {
