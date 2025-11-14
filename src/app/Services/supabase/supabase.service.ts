@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { AuthChangeEvent, createClient, Session, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
-import { Profile, Device, Request, RequestPhoto, Notification } from 'src/app/Models';
+import { Profile, Device, Request, RequestPhoto, Notification, Quote, Payment } from 'src/app/Models';
 
 @Injectable({
   providedIn: 'root',
@@ -572,5 +572,157 @@ export class SupabaseService {
         callback(payload.new as Request);
       })
       .subscribe();
+  }
+
+  async getRequestById(requestId: number): Promise<any> {
+    try {
+      const { data, error } = await this.supabase
+        .from('requests')
+        .select(`
+          *,
+          device:devices(*),
+          photos:request_photos(*),
+          quotes:quotes(*)
+        `)
+        .eq('id', requestId)
+        .order('created_at', { foreignTable: 'quotes', ascending: false })
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la requête:', error);
+      await this.handleError(error as Error);
+      return null;
+    }
+  }
+
+  async getQuoteByRequestId(requestId: number): Promise<Quote | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('quotes')
+        .select('*')
+        .eq('request_id', requestId)
+        .order('created_at', { ascending: false })
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du devis:', error);
+      return null;
+    }
+  }
+
+  async acceptQuote(quoteId: number): Promise<boolean> {
+    try {
+      const { error } = await this.supabase
+        .from('quotes')
+        .update({
+          status: 'accepted',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', quoteId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de l\'acceptation du devis:', error);
+      await this.handleError(error as Error);
+      return false;
+    }
+  }
+
+  async rejectQuote(quoteId: number, rejectionReason?: string): Promise<boolean> {
+    try {
+      const { error } = await this.supabase
+        .from('quotes')
+        .update({
+          status: 'rejected',
+          rejection_reason: rejectionReason || null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', quoteId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Erreur lors du refus du devis:', error);
+      await this.handleError(error as Error);
+      return false;
+    }
+  }
+
+  async createCashPayment(quoteId: number, amount: number): Promise<Payment | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('payments')
+        .insert({
+          quote_id: quoteId,
+          amount: amount,
+          payment_method: 'cash',
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la création du paiement:', error);
+      await this.handleError(error as Error);
+      return null;
+    }
+  }
+
+  async getPaymentByQuoteId(quoteId: number): Promise<Payment | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('payments')
+        .select('*')
+        .eq('quote_id', quoteId)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du paiement:', error);
+      return null;
+    }
+  }
+
+  subscribeToRequestQuotes(requestId: number, callback: (quote: Quote) => void) {
+    return this.supabase
+      .channel(`quotes-${requestId}`)
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'quotes',
+        filter: `request_id=eq.${requestId}`
+      }, (payload) => {
+        callback(payload.new as Quote);
+      })
+      .subscribe();
+  }
+
+  async getRequestsWithQuotes(userId: string): Promise<any[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('requests')
+        .select(`
+          *,
+          device:devices(*),
+          photos:request_photos(*),
+          quotes:quotes(*)
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Erreur lors de la récupération des requêtes avec devis:', error);
+      return [];
+    }
   }
 }

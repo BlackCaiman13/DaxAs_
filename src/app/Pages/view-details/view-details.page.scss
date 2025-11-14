@@ -1,0 +1,80 @@
+.details-content { --background: #f6f7fb; }
+
+.loading-container, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+  ion-icon { font-size: 4rem; }
+  h2 { margin: 0; }
+}
+
+.details-container { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  .request-id { font-weight: bold; font-size: 1.1rem; color: var(--ion-color-dark); }
+}
+
+ion-card {
+  margin: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  ion-card-header { padding-bottom: 0.5rem; }
+  ion-card-title { display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 600; }
+  ion-card-title ion-icon { font-size: 1.3rem; color: var(--ion-color-primary); }
+  ion-card-content { padding-top: 1rem; }
+}
+
+.info-card .info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+  &:last-child { margin-bottom: 0; }
+  .label { font-weight: 600; color: var(--ion-color-dark); font-size: 0.95rem; }
+  .value { color: var(--ion-color-medium); font-size: 0.95rem; line-height: 1.5; }
+  .value ion-icon { vertical-align: middle; margin-right: 0.3rem; font-size: 1rem; }
+  .value small { display: block; margin-top: 0.3rem; font-size: 0.85rem; color: var(--ion-color-medium-shade); }
+}
+
+.photos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+.photos-grid img { width: 100%; height: 150px; object-fit: cover; border-radius: 0.5rem; cursor: pointer; }
+
+.quote-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+
+.quote-amount { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--ion-color-light); border-radius: 0.5rem; margin-bottom: 1rem; }
+.quote-amount .label { font-weight: 600; font-size: 1rem; }
+.quote-amount .amount { font-size: 1.5rem; font-weight: bold; color: var(--ion-color-primary); }
+
+.quote-row { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; }
+.quote-row .label { font-weight: 600; color: var(--ion-color-dark); font-size: 0.95rem; }
+.quote-row .value { color: var(--ion-color-medium); font-size: 0.95rem; }
+.quote-row .description { color: var(--ion-color-medium); font-size: 0.95rem; line-height: 1.6; margin: 0; white-space: pre-wrap; }
+
+.quote-actions { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem; }
+
+.rejection-reason { display: flex; align-items: flex-start; gap: 0.5rem; padding: 1rem; background: var(--ion-color-danger-tint); border-radius: 0.5rem; margin-top: 1rem; }
+.rejection-reason ion-icon { font-size: 1.3rem; color: var(--ion-color-danger); flex-shrink: 0; margin-top: 0.1rem; }
+.rejection-reason span { color: var(--ion-color-danger-shade); font-size: 0.9rem; line-height: 1.5; }
+
+.no-quote-message { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1rem; }
+.no-quote-message ion-icon { color: var(--ion-color-warning); margin-bottom: 1rem; }
+.no-quote-message h3 { margin: 0 0 0.5rem 0; color: var(--ion-color-dark); font-size: 1.2rem; }
+.no-quote-message p { margin: 0; color: var(--ion-color-medium); line-height: 1.6; }
+
+.payment-confirmed { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 1rem 0; }
+.payment-confirmed h3 { margin: 1rem 0 0.5rem 0; color: var(--ion-color-dark); font-size: 1.2rem; }
+.payment-confirmed .payment-amount { font-size: 1.8rem; font-weight: bold; color: var(--ion-color-success); margin: 0.5rem 0; }
+.payment-confirmed .payment-info { color: var(--ion-color-medium); line-height: 1.6; margin: 0.5rem 0 1rem 0; }
+.payment-confirmed .payment-completed { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 1rem; }
+.payment-confirmed .payment-completed p { margin: 0; font-size: 0.9rem; color: var(--ion-color-medium); }
+
+.payment-pending .payment-message { text-align: center; color: var(--ion-color-dark); line-height: 1.6; margin-bottom: 1.5rem; }
+.payment-pending .payment-message strong { color: var(--ion-color-primary); font-size: 1.2rem; }

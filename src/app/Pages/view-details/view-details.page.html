@@ -7,91 +7,200 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" style="background: #fff;">
-  <div style="padding: 1.2rem 1rem;">
-    <!-- Request ID et Status -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <div style="color: #232323;">ID de demande: REQ-2024-5678</div>
-      <ion-badge style="--background: #4d5ef2; --padding-start: 0.8rem; --padding-end: 0.8rem;">En cours</ion-badge>
+<ion-content [fullscreen]="true" class="details-content">
+  @if (loading) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Chargement des détails...</p>
     </div>
-
-    <!-- Device Info -->
-    <div style="margin-bottom: 1.5rem;">
-      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-        <ion-icon name="phone-portrait-outline" style="font-size: 1.2rem; color: #4d5ef2;"></ion-icon>
-        <span style="font-weight: bold;">Smartphone - iPhone 13 Pro</span>
+  } @else if (request) {
+    <div class="details-container">
+      <div class="header-section">
+        <div class="request-id">Demande #{{request.id}}</div>
+        <ion-badge [color]="getStatusColor(request.status)">
+          {{getStatusLabel(request.status)}}
+        </ion-badge>
       </div>
-      <div style="color: #6b6b6b;">Écran fissuré, Dommages causés par l'eau</div>
+
+      <ion-card class="info-card">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="phone-portrait-outline"></ion-icon>
+            Informations de l'appareil
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="info-row">
+            <span class="label">Modèle:</span>
+            <span class="value">{{request.model}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Description du problème:</span>
+            <span class="value">{{request.problem_description}}</span>
+          </div>
+          @if (request.scheduled_at) {
+            <div class="info-row">
+              <span class="label">Date de collecte:</span>
+              <span class="value">
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{formatDate(request.scheduled_at)}}
+              </span>
+            </div>
+          }
+          @if (request.location) {
+            <div class="info-row">
+              <span class="label">Localisation:</span>
+              <span class="value">
+                <ion-icon name="location-outline"></ion-icon>
+                {{request.location}}
+                @if (request.location_details) {
+                  <br><small>{{request.location_details}}</small>
+                }
+              </span>
+            </div>
+          }
+        </ion-card-content>
+      </ion-card>
+
+      @if (request.photos && request.photos.length > 0) {
+        <ion-card class="photos-card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="images-outline"></ion-icon>
+              Photos téléchargées
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="photos-grid">
+              @for (photo of request.photos; track photo.id) {
+                <img [src]="getPhotoUrl(photo)" alt="Photo de la demande" />
+              }
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      @if (quote) {
+        <ion-card class="quote-card">
+          <ion-card-header>
+            <div class="quote-header">
+              <ion-card-title>
+                <ion-icon name="document-text-outline"></ion-icon>
+                Devis proposé
+              </ion-card-title>
+              <ion-badge [color]="getQuoteStatusColor(quote.status)">
+                {{getQuoteStatusLabel(quote.status)}}
+              </ion-badge>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="quote-amount">
+              <span class="label">Montant:</span>
+              <span class="amount">{{formatAmount(quote.amount)}}</span>
+            </div>
+            <div class="quote-row">
+              <span class="label">Durée estimée:</span>
+              <span class="value">{{quote.estimated_duration}}</span>
+            </div>
+            <div class="quote-row">
+              <span class="label">Description des travaux:</span>
+              <p class="description">{{quote.description_travaux}}</p>
+            </div>
+            @if (quote.parts_needed) {
+              <div class="quote-row">
+                <span class="label">Pièces nécessaires:</span>
+                <p class="description">{{quote.parts_needed}}</p>
+              </div>
+            }
+            <div class="quote-row">
+              <span class="label">Date de création:</span>
+              <span class="value">{{formatDate(quote.created_at)}}</span>
+            </div>
+
+            @if (quote.status === 'pending') {
+              <div class="quote-actions">
+                <ion-button expand="block" color="success" (click)="acceptQuote()">
+                  <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+                  Accepter le devis
+                </ion-button>
+                <ion-button expand="block" color="danger" fill="outline" (click)="rejectQuote()">
+                  <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+                  Refuser le devis
+                </ion-button>
+              </div>
+            }
+
+            @if (quote.status === 'rejected' && quote.rejection_reason) {
+              <div class="rejection-reason">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>Raison du refus: {{quote.rejection_reason}}</span>
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+      } @else {
+        <ion-card class="no-quote-card">
+          <ion-card-content>
+            <div class="no-quote-message">
+              <ion-icon name="time-outline" size="large"></ion-icon>
+              <h3>En attente du devis</h3>
+              <p>Le réparateur prépare votre devis. Vous serez notifié dès qu'il sera disponible.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      @if (quote && quote.status === 'accepted') {
+        <ion-card class="payment-card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="cash-outline"></ion-icon>
+              Paiement en espèces
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            @if (payment) {
+              <div class="payment-confirmed">
+                <ion-icon name="checkmark-circle" color="success" size="large"></ion-icon>
+                <h3>Paiement confirmé</h3>
+                <p class="payment-amount">{{formatAmount(payment.amount)}}</p>
+                <p class="payment-info">
+                  Vous paierez ce montant en espèces lors de la récupération de votre appareil réparé.
+                </p>
+                @if (payment.status === 'completed') {
+                  <div class="payment-completed">
+                    <ion-badge color="success">Paiement collecté</ion-badge>
+                    @if (payment.payment_date) {
+                      <p>Le {{formatDate(payment.payment_date)}}</p>
+                    }
+                  </div>
+                } @else {
+                  <ion-badge color="warning">En attente de collecte</ion-badge>
+                }
+              </div>
+            } @else {
+              <div class="payment-pending">
+                <p class="payment-message">
+                  Vous paierez <strong>{{formatAmount(quote.amount)}}</strong> en espèces lors de la récupération de votre appareil.
+                </p>
+                <ion-button expand="block" color="primary" (click)="confirmCashPayment()">
+                  <ion-icon slot="start" name="cash-outline"></ion-icon>
+                  Confirmer le paiement en espèces
+                </ion-button>
+              </div>
+            }
+          </ion-card-content>
+        </ion-card>
+      }
     </div>
-
-    <!-- Photos -->
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Photos téléchargées</h3>
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-        <img src="assets/device-photos/1653533682536.png" style="width: 100%; height: 150px; object-fit: cover; border-radius: 0.5rem;" alt="Cracked Screen">
-        <img src="assets/device-photos/How-To-Fix-Broken-Screen-On-Android-Phone-1024x623.jpg" style="width: 100%; height: 150px; object-fit: cover; border-radius: 0.5rem;" alt="Water Damage">
-      </div>
+  } @else {
+    <div class="error-state">
+      <ion-icon name="alert-circle-outline" size="large"></ion-icon>
+      <h2>Demande introuvable</h2>
+      <p>Cette demande n'existe pas ou vous n'y avez pas accès.</p>
+      <ion-button [routerLink]="['/tabs/request']" color="primary">
+        Retour aux demandes
+      </ion-button>
     </div>
-
-    <!-- Problem Description -->
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Problème & Emplacement</h3>
-      <div style="margin-bottom: 1rem;">
-        <div style="font-weight: bold; margin-bottom: 0.5rem;">Description du problème:</div>
-        <div style="color: #6b6b6b;">Mon iPhone est tombé dans une flaque d'eau et l'écran s'est immédiatement fissuré. Maintenant, l'écran scintille et il y a des taches sombres. J'ai également remarqué de l'eau sous l'objectif de la caméra. Le téléphone se charge mais ne répond pas au toucher.</div>
-      </div>
-      <div style="margin-bottom: 1rem;">
-        <div style="font-weight: bold; margin-bottom: 0.5rem;">Date de collecte:</div>
-        <div style="color: #6b6b6b;">
-          <ion-icon name="calendar-outline" style="margin-right: 0.5rem; vertical-align: middle;"></ion-icon>
-          15 juillet 2024, 10h00
-        </div>
-      </div>
-      <div>
-        <div style="font-weight: bold; margin-bottom: 0.5rem;">Emplacement:</div>
-        <div style="color: #6b6b6b;">
-          <ion-icon name="location-outline" style="margin-right: 0.5rem; vertical-align: middle;"></ion-icon>
-          123 Tech Lane, Innovation City, 90210<br>
-          Devant la porte, sous le paillasson.
-        </div>
-      </div>
-    </div>
-
-    <!-- Repair Timeline -->
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem;">Reparations</h3>
-      <div style="display: flex; flex-direction: column; gap: 1rem;">
-        <div style="display: flex; align-items: center; gap: 1rem;">
-          <ion-icon name="checkmark-circle" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
-          <div style="flex: 1;">Demande soumise</div>
-          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
-        </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-          <ion-icon name="checkmark-circle" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
-          <div style="flex: 1;">En cours d'examen</div>
-          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
-        </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-          <ion-icon name="checkmark-circle" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
-          <div style="flex: 1;">Pièces commandées</div>
-          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
-        </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-          <ion-icon name="radio-button-on" style="color: #4d5ef2; font-size: 1.5rem;"></ion-icon>
-          <div style="flex: 1;">Réparation en cours</div>
-          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
-        </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-          <ion-icon name="ellipse-outline" style="color: #6b6b6b; font-size: 1.5rem;"></ion-icon>
-          <div style="flex: 1;">Contrôle de qualité</div>
-          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
-        </div>
-        <div style="display: flex; align-items: center; gap: 1rem;">
-          <ion-icon name="ellipse-outline" style="color: #6b6b6b; font-size: 1.5rem;"></ion-icon>
-          <div style="flex: 1;">Prêt pour la collecte</div>
-          <ion-icon name="chevron-down-outline" style="color: #6b6b6b;"></ion-icon>
-        </div>
-      </div>
-    </div>
-
-
+  }
+</ion-content>

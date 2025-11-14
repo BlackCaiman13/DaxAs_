@@ -31,9 +31,17 @@
               </div>
             </div>
             <div class="request-body">
-              <span class="request-status" [ngStyle]="{'background': getStatusColor(req.status), 'color': '#fff'}">
-                {{getStatusLabel(req.status)}}
-              </span>
+              <div class="status-badges">
+                <span class="request-status" [ngStyle]="{'background': getStatusColor(req.status), 'color': '#fff'}">
+                  {{getStatusLabel(req.status)}}
+                </span>
+                @if (hasPendingQuote(req)) {
+                  <ion-badge color="warning">Nouveau devis</ion-badge>
+                }
+                @if (hasAcceptedQuote(req)) {
+                  <ion-badge color="success">Devis accepté</ion-badge>
+                }
+              </div>
               <div class="request-actions">
                 <a class="voir-plus" [routerLink]="['/tabs/view-details']" [state]="{request: req}">voir plus</a>
               </div>
