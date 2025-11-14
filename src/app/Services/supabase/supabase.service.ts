@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { AuthChangeEvent, createClient, Session, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from 'src/environments/environment';
-import { Profile, Device, Request, RequestPhoto, Notification, Quote, Payment } from 'src/app/Models';
+import { Profile, Device, Request, RequestPhoto, Notification, Quote, Payment, Assignment } from 'src/app/Models';
 
 @Injectable({
   providedIn: 'root',
@@ -713,7 +713,17 @@ export class SupabaseService {
           *,
           device:devices(*),
           photos:request_photos(*),
-          quotes:quotes(*)
+          quotes:quotes(*),
+          assignment:assignments!assignments_request_id_fkey(
+            id,
+            repairer_id,
+            status,
+            repairer:profiles!assignments_repairer_id_fkey(
+              id,
+              fullname,
+              avatar_url
+            )
+          )
         `)
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
@@ -723,6 +733,51 @@ export class SupabaseService {
     } catch (error) {
       console.error('Erreur lors de la récupération des requêtes avec devis:', error);
       return [];
+    }
+  }
+
+  async getAssignedRepairer(requestId: number): Promise<any | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('assignments')
+        .select(`
+          repairer:profiles!assignments_repairer_id_fkey(
+            id,
+            fullname,
+            phone,
+            avatar_url
+          )
+        `)
+        .eq('request_id', requestId)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      if (error) throw error;
+      return data?.repairer || null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du réparateur assigné:', error);
+      return null;
+    }
+  }
+
+  async createNotificationForRepairer(repairerId: string, notification: Partial<Notification>): Promise<Notification | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('notifications')
+        .insert({
+          user_id: repairerId,
+          title: notification.title,
+          message: notification.message,
+          is_read: false
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erreur lors de la création de la notification pour le réparateur:', error);
+      return null;
     }
   }
 }

@@ -23,27 +23,60 @@
     } @else {
       <ion-list lines="none" class="request-list">
         @for (req of requests; track req.id) {
-          <ion-item class="request-item">
-            <div class="request-header">
-              <div class="request-info">
-                <span class="request-title">{{req.model}}</span>
-                <span class="request-id">Request ID: #{{req.id}}</span>
+          <ion-item class="request-item" [routerLink]="['/tabs/view-details']" [state]="{request: req}">
+            <div class="request-card-content">
+              <div class="request-header">
+                <div class="request-info">
+                  <h3 class="request-title">{{req.model}}</h3>
+                  <span class="request-id">Demande #{{req.id}}</span>
+                  <span class="request-date">{{getRelativeDate(req.created_at)}}</span>
+                </div>
+                @if (req.photos && req.photos.length > 0) {
+                  <div class="request-thumbnail">
+                    <img [src]="req.photos[0].photo_url" alt="Photo aperçu" />
+                    @if (req.photos.length > 1) {
+                      <div class="photo-count">
+                        <ion-icon name="images-outline"></ion-icon>
+                        {{req.photos.length}}
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
-            <div class="request-body">
+
+              <p class="request-description">{{req.problem_description}}</p>
+
               <div class="status-badges">
-                <span class="request-status" [ngStyle]="{'background': getStatusColor(req.status), 'color': '#fff'}">
+                <ion-badge class="status-badge" [style.background]="getStatusColor(req.status)" [style.color]="'#fff'">
+                  <ion-icon [name]="getStatusIcon(req.status)"></ion-icon>
                   {{getStatusLabel(req.status)}}
-                </span>
+                </ion-badge>
                 @if (hasPendingQuote(req)) {
-                  <ion-badge color="warning">Nouveau devis</ion-badge>
+                  <ion-badge color="warning" class="animated-badge">
+                    <ion-icon name="document-text-outline"></ion-icon>
+                    Nouveau devis
+                  </ion-badge>
                 }
                 @if (hasAcceptedQuote(req)) {
-                  <ion-badge color="success">Devis accepté</ion-badge>
+                  <ion-badge color="success">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    Devis accepté
+                  </ion-badge>
                 }
               </div>
-              <div class="request-actions">
-                <a class="voir-plus" [routerLink]="['/tabs/view-details']" [state]="{request: req}">voir plus</a>
+
+              @if (req.assignment && req.assignment.length > 0 && req.assignment[0].repairer) {
+                <div class="repairer-info">
+                  <ion-icon name="person-circle-outline"></ion-icon>
+                  <span>Assigné à: <strong>{{req.assignment[0].repairer.fullname}}</strong></span>
+                </div>
+              }
+
+              <div class="request-footer">
+                <ion-button fill="clear" size="small" class="view-details-btn">
+                  Voir les détails
+                  <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+                </ion-button>
               </div>
             </div>
           </ion-item>

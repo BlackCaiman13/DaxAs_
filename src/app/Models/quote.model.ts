@@ -3,6 +3,7 @@ export type QuoteStatus = 'pending' | 'accepted' | 'rejected';
 export interface Quote {
   id: number;
   request_id: number;
+  repairer_id: string | null;
   amount: number;
   description_travaux: string;
   estimated_duration: string;
