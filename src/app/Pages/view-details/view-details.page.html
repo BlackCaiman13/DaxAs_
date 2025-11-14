@@ -72,8 +72,13 @@
           </ion-card-header>
           <ion-card-content>
             <div class="photos-grid">
-              @for (photo of request.photos; track photo.id) {
-                <img [src]="getPhotoUrl(photo)" alt="Photo de la demande" />
+              @for (photo of request.photos; track photo.id; let i = $index) {
+                <div class="photo-item" (click)="openPhotoModal(i)">
+                  <img [src]="getPhotoUrl(photo)" alt="Photo de la demande" />
+                  <div class="photo-overlay">
+                    <ion-icon name="expand-outline"></ion-icon>
+                  </div>
+                </div>
               }
             </div>
           </ion-card-content>
@@ -149,6 +154,148 @@
           </ion-card-content>
         </ion-card>
       }
+
+      @if (request.assignment && request.assignment.length > 0 && request.assignment[0].repairer) {
+        <ion-card class="repairer-card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="person-outline"></ion-icon>
+              Réparateur assigné
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="repairer-details">
+              <div class="repairer-avatar">
+                @if (request.assignment[0].repairer.avatar_url) {
+                  <img [src]="request.assignment[0].repairer.avatar_url" alt="Avatar" />
+                } @else {
+                  <ion-icon name="person-circle-outline"></ion-icon>
+                }
+              </div>
+              <div class="repairer-info-detailed">
+                <h4>{{request.assignment[0].repairer.fullname}}</h4>
+                @if (request.assignment[0].repairer.phone) {
+                  <a [href]="'tel:' + request.assignment[0].repairer.phone" class="contact-link">
+                    <ion-icon name="call-outline"></ion-icon>
+                    {{request.assignment[0].repairer.phone}}
+                  </a>
+                }
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <ion-card class="timeline-card">
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="git-commit-outline"></ion-icon>
+            Suivi de la réparation
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="timeline">
+            <div class="timeline-item" [class.active]="true">
+              <div class="timeline-marker completed">
+                <ion-icon name="checkmark-circle"></ion-icon>
+              </div>
+              <div class="timeline-content">
+                <h4>Demande créée</h4>
+                <p class="timeline-date">{{formatDate(request.created_at)}}</p>
+              </div>
+            </div>
+
+            @if (request.assignment && request.assignment.length > 0) {
+              <div class="timeline-item" [class.active]="true">
+                <div class="timeline-marker completed">
+                  <ion-icon name="person-add"></ion-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Assigné à un réparateur</h4>
+                  <p class="timeline-date">{{formatDate(request.assignment[0].assigned_at)}}</p>
+                  <p class="timeline-detail">{{request.assignment[0].repairer.fullname}}</p>
+                </div>
+              </div>
+            }
+
+            @if (quote) {
+              <div class="timeline-item" [class.active]="true">
+                <div class="timeline-marker" [class.completed]="quote.status !== 'pending'">
+                  <ion-icon name="document-text"></ion-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Devis proposé</h4>
+                  <p class="timeline-date">{{formatDate(quote.created_at)}}</p>
+                  <p class="timeline-detail">Montant: {{formatAmount(quote.amount)}}</p>
+                </div>
+              </div>
+            }
+
+            @if (quote && quote.status === 'accepted') {
+              <div class="timeline-item" [class.active]="true">
+                <div class="timeline-marker completed">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Devis accepté</h4>
+                  <p class="timeline-date">{{formatDate(quote.updated_at)}}</p>
+                </div>
+              </div>
+            }
+
+            @if (payment) {
+              <div class="timeline-item" [class.active]="true">
+                <div class="timeline-marker" [class.completed]="payment.status === 'completed'">
+                  <ion-icon name="cash"></ion-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Paiement confirmé</h4>
+                  <p class="timeline-date">{{formatDate(payment.created_at)}}</p>
+                  <p class="timeline-detail">Mode: Espèces</p>
+                </div>
+              </div>
+            }
+
+            @if (request.status === 'in_progress') {
+              <div class="timeline-item" [class.active]="true">
+                <div class="timeline-marker current">
+                  <ion-icon name="construct"></ion-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Réparation en cours</h4>
+                  <p class="timeline-detail">Votre appareil est en cours de réparation</p>
+                </div>
+              </div>
+            }
+
+            @if (request.status === 'completed') {
+              <div class="timeline-item" [class.active]="true">
+                <div class="timeline-marker completed">
+                  <ion-icon name="checkmark-done"></ion-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Réparation terminée</h4>
+                  <p class="timeline-detail">Votre appareil est prêt pour la collecte</p>
+                </div>
+              </div>
+            }
+
+            @if (payment && payment.status === 'completed') {
+              <div class="timeline-item" [class.active]="true">
+                <div class="timeline-marker completed">
+                  <ion-icon name="checkmark-done-circle"></ion-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Paiement collecté</h4>
+                  @if (payment.payment_date) {
+                    <p class="timeline-date">{{formatDate(payment.payment_date)}}</p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </ion-card-content>
+      </ion-card>
 
       @if (quote && quote.status === 'accepted') {
         <ion-card class="payment-card">

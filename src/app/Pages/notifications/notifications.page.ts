@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonSpinner, IonBadge } from '@ionic/angular/standalone';
 import { Notification } from 'src/app/Models';
 import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
 
@@ -10,10 +10,11 @@ import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
   templateUrl: './notifications.page.html',
   styleUrls: ['./notifications.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonSpinner, CommonModule, FormsModule]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonList, IonItem, IonLabel, IonItemSliding, IonItemOptions, IonItemOption, IonSpinner, IonBadge, CommonModule, FormsModule]
 })
 export class NotificationsPage implements OnInit, OnDestroy {
   notifications: Notification[] = [];
+  groupedNotifications: { [key: string]: Notification[] } = {};
   loading = true;
   private notificationSubscription: any;
 
@@ -36,11 +37,61 @@ export class NotificationsPage implements OnInit, OnDestroy {
       const user = await this.supabaseService.getUser();
       if (user) {
         this.notifications = await this.supabaseService.getNotifications(user.id);
+        this.groupNotificationsByDate();
       }
     } catch (error) {
       console.error('Erreur lors du chargement des notifications:', error);
     } finally {
       this.loading = false;
+    }
+  }
+
+  groupNotificationsByDate() {
+    this.groupedNotifications = {};
+    const now = new Date();
+
+    this.notifications.forEach(notification => {
+      const notifDate = new Date(notification.created_at);
+      const diffDays = Math.floor((now.getTime() - notifDate.getTime()) / 86400000);
+
+      let groupKey: string;
+      if (diffDays === 0) {
+        groupKey = "Aujourd'hui";
+      } else if (diffDays === 1) {
+        groupKey = 'Hier';
+      } else if (diffDays < 7) {
+        groupKey = 'Cette semaine';
+      } else if (diffDays < 30) {
+        groupKey = 'Ce mois-ci';
+      } else {
+        groupKey = 'Plus ancien';
+      }
+
+      if (!this.groupedNotifications[groupKey]) {
+        this.groupedNotifications[groupKey] = [];
+      }
+      this.groupedNotifications[groupKey].push(notification);
+    });
+  }
+
+  getGroupKeys(): string[] {
+    const order = ["Aujourd'hui", 'Hier', 'Cette semaine', 'Ce mois-ci', 'Plus ancien'];
+    return order.filter(key => this.groupedNotifications[key]?.length > 0);
+  }
+
+  getUnreadCount(): number {
+    return this.notifications.filter(n => !n.is_read).length;
+  }
+
+  async markAllAsRead() {
+    try {
+      const unreadNotifications = this.notifications.filter(n => !n.is_read);
+      for (const notification of unreadNotifications) {
+        await this.supabaseService.markNotificationAsRead(notification.id.toString());
+        notification.is_read = true;
+      }
+    } catch (error) {
+      console.error('Erreur lors du marquage de toutes les notifications:', error);
     }
   }
 
@@ -52,6 +103,7 @@ export class NotificationsPage implements OnInit, OnDestroy {
         (newNotification) => {
           console.log('Nouvelle notification reçue:', newNotification);
           this.notifications.unshift(newNotification);
+          this.groupNotificationsByDate();
         }
       );
     }

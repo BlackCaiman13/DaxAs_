@@ -1,8 +1,16 @@
 <ion-header collapse="fade">
   <ion-toolbar>
-    <ion-title >Notifications</ion-title>
+    <ion-title>Notifications
+      @if (getUnreadCount() > 0) {
+        <ion-badge color="danger" class="unread-badge">{{getUnreadCount()}}</ion-badge>
+      }
+    </ion-title>
     <ion-buttons slot="end">
-      <ion-icon name="notifications-outline" style="font-size: 1.5rem; margin-right: 0.5rem;"></ion-icon>
+      @if (getUnreadCount() > 0) {
+        <ion-button (click)="markAllAsRead()">
+          <ion-icon slot="icon-only" name="checkmark-done-outline"></ion-icon>
+        </ion-button>
+      }
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -21,8 +29,13 @@
         <p style="color: #6b6b6b;">Vous n'avez pas encore de notifications</p>
       </div>
     } @else {
-      <ion-list lines="none">
-        @for (notif of notifications; track notif.id) {
+      @for (groupKey of getGroupKeys(); track groupKey) {
+        <div class="notification-group">
+          <div class="group-header">
+            <h3>{{groupKey}}</h3>
+          </div>
+          <ion-list lines="none">
+            @for (notif of groupedNotifications[groupKey]; track notif.id) {
           <ion-item-sliding #slidingItem>
             <ion-item style="background: #fafbfc; align-items: flex-start; --padding-start: 1rem; --inner-padding-end: 1rem;">
               <ion-icon [name]="getNotificationIcon(notif)" slot="start" [style.color]="getNotificationColor(notif)" style="font-size: 1.3rem; margin-top: 0.2rem;"></ion-icon>
@@ -51,8 +64,10 @@
             </ion-item-options>
 
           </ion-item-sliding>
-        }
-      </ion-list>
+            }
+          </ion-list>
+        </div>
+      }
     }
   </div>
 </ion-content>

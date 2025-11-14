@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -19,6 +19,7 @@ import {
   IonSpinner,
   AlertController,
   ToastController,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { SupabaseService } from 'src/app/Services/supabase/supabase.service';
 import { Quote, Payment } from 'src/app/Models';
@@ -59,7 +60,8 @@ export class ViewDetailsPage implements OnInit, OnDestroy {
     private router: Router,
     private supabaseService: SupabaseService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private modalController: ModalController
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state) {
@@ -300,6 +302,18 @@ export class ViewDetailsPage implements OnInit, OnDestroy {
     return photo.photo_url || '';
   }
 
+  async openPhotoModal(index: number) {
+    const modal = await this.modalController.create({
+      component: PhotoModalComponent,
+      componentProps: {
+        photos: this.request.photos,
+        initialIndex: index
+      },
+      cssClass: 'photo-modal'
+    });
+    await modal.present();
+  }
+
   private async showToast(message: string, color: string) {
     const toast = await this.toastController.create({
       message,
@@ -308,5 +322,123 @@ export class ViewDetailsPage implements OnInit, OnDestroy {
       position: 'bottom'
     });
     await toast.present();
+  }
+}
+
+// Photo Modal Component
+@Component({
+  selector: 'app-photo-modal',
+  template: `
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Photo {{currentIndex + 1}} / {{photos.length}}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="dismiss()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="photo-modal-content">
+      <div class="photo-viewer">
+        <ion-button fill="clear" class="nav-button prev" (click)="previousPhoto()" [disabled]="currentIndex === 0">
+          <ion-icon name="chevron-back-outline"></ion-icon>
+        </ion-button>
+
+        <div class="photo-container">
+          <img [src]="photos[currentIndex].photo_url" alt="Photo" />
+        </div>
+
+        <ion-button fill="clear" class="nav-button next" (click)="nextPhoto()" [disabled]="currentIndex === photos.length - 1">
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-content>
+  `,
+  styles: [`
+    .photo-modal-content {
+      --background: rgba(0, 0, 0, 0.95);
+    }
+
+    .photo-viewer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+
+    .photo-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+
+      img {
+        max-width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+      }
+    }
+
+    .nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      --color: white;
+      font-size: 2rem;
+      z-index: 10;
+
+      &.prev {
+        left: 1rem;
+      }
+
+      &.next {
+        right: 1rem;
+      }
+
+      ion-icon {
+        font-size: 2.5rem;
+      }
+    }
+  `],
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonButtons,
+    IonButton,
+    IonIcon
+  ]
+})
+export class PhotoModalComponent implements OnInit {
+  @Input() photos: any[] = [];
+  @Input() initialIndex = 0;
+  currentIndex = 0;
+
+  constructor(private modalController: ModalController) {}
+
+  ngOnInit() {
+    this.currentIndex = this.initialIndex;
+  }
+
+  nextPhoto() {
+    if (this.currentIndex < this.photos.length - 1) {
+      this.currentIndex++;
+    }
+  }
+
+  previousPhoto() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  dismiss() {
+    this.modalController.dismiss();
   }
 }

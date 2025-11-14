@@ -44,8 +44,53 @@ ion-card {
   .value small { display: block; margin-top: 0.3rem; font-size: 0.85rem; color: var(--ion-color-medium-shade); }
 }
 
-.photos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
-.photos-grid img { width: 100%; height: 150px; object-fit: cover; border-radius: 0.5rem; cursor: pointer; }
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+}
+
+.photo-item {
+  position: relative;
+  height: 150px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+
+    ion-icon {
+      color: white;
+      font-size: 2rem;
+    }
+  }
+
+  &:hover .photo-overlay {
+    opacity: 1;
+  }
+}
 
 .quote-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
 
@@ -78,3 +123,163 @@ ion-card {
 
 .payment-pending .payment-message { text-align: center; color: var(--ion-color-dark); line-height: 1.6; margin-bottom: 1.5rem; }
 .payment-pending .payment-message strong { color: var(--ion-color-primary); font-size: 1.2rem; }
+
+// Repairer Card
+.repairer-card {
+  .repairer-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .repairer-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--ion-color-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    ion-icon {
+      font-size: 3rem;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .repairer-info-detailed {
+    flex: 1;
+
+    h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--ion-color-primary);
+      text-decoration: none;
+      font-size: 0.95rem;
+
+      ion-icon {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+// Timeline
+.timeline-card {
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--ion-color-primary), var(--ion-color-light));
+    }
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+
+    &.active {
+      opacity: 1;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -2.5rem;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--ion-color-light);
+    border: 3px solid var(--ion-color-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: all 0.3s ease;
+
+    ion-icon {
+      font-size: 1.3rem;
+      color: var(--ion-color-medium);
+    }
+
+    &.completed {
+      background: var(--ion-color-success);
+      border-color: var(--ion-color-success);
+
+      ion-icon {
+        color: white;
+      }
+    }
+
+    &.current {
+      background: var(--ion-color-primary);
+      border-color: var(--ion-color-primary);
+      animation: pulse-ring 2s ease-in-out infinite;
+
+      ion-icon {
+        color: white;
+      }
+    }
+  }
+
+  .timeline-content {
+    h4 {
+      margin: 0 0 0.3rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+
+    .timeline-date {
+      margin: 0.2rem 0;
+      font-size: 0.85rem;
+      color: var(--ion-color-medium);
+    }
+
+    .timeline-detail {
+      margin: 0.3rem 0 0 0;
+      font-size: 0.9rem;
+      color: var(--ion-color-medium-shade);
+      font-style: italic;
+    }
+  }
+}
+
+@keyframes pulse-ring {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(77, 94, 242, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(77, 94, 242, 0);
+  }
+}
